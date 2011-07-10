@@ -1,0 +1,10 @@
+*.iml
+*.ipr
+*.iws
+.idea/
+target/
+lib/
+lib_managed/
+src_managed/
+out/
+project/boot/
