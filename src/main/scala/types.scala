@@ -23,6 +23,8 @@ import com.miriamlaurel.wontfix.numbers.Decimal
 import java.util.{TimeZone, Date, Locale}
 import java.text.SimpleDateFormat
 import xml._
+import java.nio.charset.Charset
+import javax.management.remote.rmi._RMIConnection_Stub
 
 sealed abstract class FixValue[+T] {
   def value: T
@@ -225,7 +227,7 @@ case class Data(data: Array[Byte]) extends FixValue[String] {
 
   def this(s: String) = this(s.getBytes)
 
-  lazy val value = data.toString
+  lazy val value = new String(data, Charset.forName("UTF-8"))
   def length = data.length
 }
 
@@ -252,7 +254,9 @@ case class Tenor(override val value: String) extends Pattern[String] {
   def isValid = value.matches("""^[DMWY]\d+$""")
 }
 
-case class FixField(tag: TagNum, value: FixValue[Any]) {
+sealed abstract class FixElement
+
+case class FixField(tag: TagNum, value: FixValue[Any]) extends FixElement {
 
   def this(tagNumber: Int, value: FixValue[Any]) = this(TagNum(tagNumber), value)
 
@@ -260,3 +264,13 @@ case class FixField(tag: TagNum, value: FixValue[Any]) {
 
   override def toString = tagNumber.toString + "=" + value.toString
 }
+
+case class FixRepeatingGroup(groups: List[FixElement]*) extends FixElement {
+
+  require(groups.forall(e => e.size > 0 && e(0).isInstanceOf[FixField]) &&
+    groups.map(_(0).asInstanceOf[FixField].tagNumber).toSet.size == 1)
+
+  def size = groups.length
+}
+
+case class FixStructure(elements: FixElement*) extends FixElement
