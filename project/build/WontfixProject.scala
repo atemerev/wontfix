@@ -29,7 +29,7 @@ class WontfixProject(info: ProjectInfo) extends DefaultProject(info) with AkkaPr
   override def libraryDependencies = Set(
     "org.apache.mina" % "mina-core" % "2.0.4",
     "net.lag" % "configgy" % "2.0.3-SNAPSHOT",
-    "org.scalatest" % "scalatest_2.8.1" % "1.5.1" % "test",
+    "org.scalatest" % "scalatest_2.9.0" % "1.6.1" % "test",
     "ch.qos.logback" % "logback-classic" % "0.9.29"
   ) ++ super.libraryDependencies
 }
