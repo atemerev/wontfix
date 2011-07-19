@@ -42,13 +42,13 @@ class FixtpCodec(val version: String) extends ByteCodec {
     val bodyData = body.map(fieldToBytes(_)).foldLeft(Array[Byte]())(_ ++ _)
     val bodyLength = FixField(9, bodyData.length)
     val checksum = FixField(10, bodyData.foldLeft(0)(_.toInt + _.toInt) % 256)
-    Array[Array[Byte]](
+    Array.concat(
       fieldToBytes(begin),
       fieldToBytes(typeField),
       fieldToBytes(bodyLength),
       bodyData,
       fieldToBytes(checksum)
-    ).foldLeft(Array[Byte]())(_ ++ _)
+    )
   }
   def decode(data: Array[Byte]) = undefined
 
