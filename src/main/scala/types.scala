@@ -254,7 +254,7 @@ case class Tenor(override val value: String) extends Pattern[String] {
 
 sealed trait FixElement {
   def flatten: List[FixField]
-  override def toString = flatten.map(_.toString).mkString(" | ")
+  override def toString: String = flatten.map(field => field.toString).mkString(" | ")
 }
 
 case class FixField(tag: TagNum, value: FixValue[Any]) extends FixElement {
@@ -263,7 +263,7 @@ case class FixField(tag: TagNum, value: FixValue[Any]) extends FixElement {
 
   lazy val tagNumber = tag.value
 
-  override def toString = tagNumber.toString + "=" + value.toString
+  override def toString: String = tagNumber.toString + "=" + value.toString
 
   def flatten = List(this)
 }
@@ -294,7 +294,4 @@ case class FixStructure(elements: FixElement*) extends FixElement {
   lazy val flatten = elements.map(_.flatten).flatten.toList
 }
 
-case class FixMessage(msgType: String, structure: FixStructure) {
-  lazy val flatten = FixField(35, msgType) :: structure.flatten
-  override def toString = flatten.map(_.toString).mkString(" | ")
-}
+case class FixMessage(msgType: String, structure: FixStructure)

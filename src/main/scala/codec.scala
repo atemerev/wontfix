@@ -19,8 +19,9 @@
 
 package com.miriamlaurel.wontfix.codec
 
-import com.miriamlaurel.wontfix.types.FixMessage
 import com.miriamlaurel.wontfix.util._
+import com.miriamlaurel.wontfix.types._
+import java.nio.charset.Charset
 
 case class ParseError(message: String)
 
@@ -31,6 +32,25 @@ trait ByteCodec {
 }
 
 class FixtpCodec(val version: String) extends ByteCodec {
-  def encode(message: FixMessage) = undefined
+
+  private val UTF8 = Charset.forName("UTF-8")
+
+  def encode(message: FixMessage) = {
+    val body = message.structure.flatten
+    val typeField = FixField(35, message.msgType)
+    val begin = FixField(8, version)
+    val bodyData = body.map(fieldToBytes(_)).foldLeft(Array[Byte]())(_ ++ _)
+    val bodyLength = FixField(9, bodyData.length)
+    val checksum = FixField(10, bodyData.foldLeft(0)(_.toInt + _.toInt) % 256)
+    Array[Array[Byte]](
+      fieldToBytes(begin),
+      fieldToBytes(typeField),
+      fieldToBytes(bodyLength),
+      bodyData,
+      fieldToBytes(checksum)
+    ).foldLeft(Array[Byte]())(_ ++ _)
+  }
   def decode(data: Array[Byte]) = undefined
+
+  private def fieldToBytes(field: FixField): Array[Byte] = field.toString.getBytes(UTF8) :+ 1.toByte
 }

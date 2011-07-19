@@ -15,8 +15,5 @@ class FixTypesSuite extends FunSuite {
     val snapshot = FixStructure(instrument, quotes)
     assert ("55=EUR/USD | 268=2 | 269=0 | 270=1.40546 | 271=1000000 | 269=1 | 270=1.40550 | 271=1000000" ===
       snapshot.toString)
-    val message = FixMessage("W", snapshot)
-    assert("35=W | 55=EUR/USD | 268=2 | 269=0 | 270=1.40546 | 271=1000000 | 269=1 | 270=1.40550 | 271=1000000" ===
-      message.toString)
   }
 }
