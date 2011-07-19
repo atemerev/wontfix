@@ -23,7 +23,7 @@ import java.math.MathContext
 
 class Decimal(bd: java.math.BigDecimal) extends BigDecimal(bd, MathContext.DECIMAL64) {
 
-  def this(bd: BigDecimal) = this(bd.bigDecimal.stripTrailingZeros)
+  def this(bd: BigDecimal) = this(bd.bigDecimal)
   def this(s: String) = this(BigDecimal(s, MathContext.DECIMAL64))
   def this(i: Int) = this(BigDecimal(i))
   def this(l: Long) = this(BigDecimal(l))
