@@ -253,7 +253,7 @@ case class Tenor(override val value: String) extends Pattern[String] {
 }
 
 sealed trait FixElement {
-  def flatten: List[FixElement]
+  def flatten: List[FixField]
   override def toString = flatten.map(_.toString).mkString(" | ")
 }
 
@@ -267,6 +267,7 @@ case class FixField(tag: TagNum, value: FixValue[Any]) extends FixElement {
 
   def flatten = List(this)
 }
+
 object FixField {
   def apply(tagNumber: Int, value: FixValue[Any]) = new FixField(TagNum(tagNumber), value)
   def apply(tagNumber: Int, value: Int) = new FixField(TagNum(tagNumber), FixInteger(value))
@@ -283,13 +284,17 @@ case class FixRepeatingGroup(groupTag: TagNum, groups: List[FixElement]*) extend
 
   def size = groups.length
 
-  lazy val flatten = FixField(groupTag, NumInGroup(size)) :: groups.flatten.toList
+  lazy val flatten = FixField(groupTag, NumInGroup(size)) :: groups.flatten.map(_.flatten).flatten.toList
 }
 object FixRepeatingGroup {
   def apply(groupNumber: Int, groups: List[FixElement]*) = new FixRepeatingGroup(TagNum(groupNumber), groups: _*)
 }
 
-
 case class FixStructure(elements: FixElement*) extends FixElement {
   lazy val flatten = elements.map(_.flatten).flatten.toList
+}
+
+case class FixMessage(msgType: String, structure: FixStructure) {
+  lazy val flatten = FixField(35, msgType) :: structure.flatten
+  override def toString = flatten.map(_.toString).mkString(" | ")
 }

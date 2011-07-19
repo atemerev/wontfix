@@ -13,7 +13,10 @@ class FixTypesSuite extends FunSuite {
       List(FixField(269, '1'), FixField(270, Price("1.40550")), FixField(271, Qty("1000000")))
     )
     val snapshot = FixStructure(instrument, quotes)
-    val result = "55=EUR/USD | 268=2 | 269=0 | 270=1.40546 | 271=1000000 | 269=1 | 270=1.40550 | 271=1000000"
-    assert (result === snapshot.toString)
+    assert ("55=EUR/USD | 268=2 | 269=0 | 270=1.40546 | 271=1000000 | 269=1 | 270=1.40550 | 271=1000000" ===
+      snapshot.toString)
+    val message = FixMessage("W", snapshot)
+    assert("35=W | 55=EUR/USD | 268=2 | 269=0 | 270=1.40546 | 271=1000000 | 269=1 | 270=1.40550 | 271=1000000" ===
+      message.toString)
   }
 }
