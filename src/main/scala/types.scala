@@ -267,6 +267,13 @@ case class FixField(tag: TagNum, value: FixValue[Any]) extends FixElement {
 
   def flatten = List(this)
 }
+object FixField {
+  def apply(tagNumber: Int, value: FixValue[Any]) = new FixField(TagNum(tagNumber), value)
+  def apply(tagNumber: Int, value: Int) = new FixField(TagNum(tagNumber), FixInteger(value))
+  def apply(tagNumber: Int, value: Decimal) = new FixField(TagNum(tagNumber), FixFloat(value))
+  def apply(tagNumber: Int, value: Char) = new FixField(TagNum(tagNumber), FixChar(value))
+  def apply(tagNumber: Int, value: String) = new FixField(TagNum(tagNumber), FixString(value))
+}
 
 case class FixRepeatingGroup(groupTag: TagNum, groups: List[FixElement]*) extends FixElement {
 
@@ -278,6 +285,10 @@ case class FixRepeatingGroup(groupTag: TagNum, groups: List[FixElement]*) extend
 
   lazy val flatten = FixField(groupTag, NumInGroup(size)) :: groups.flatten.toList
 }
+object FixRepeatingGroup {
+  def apply(groupNumber: Int, groups: List[FixElement]*) = new FixRepeatingGroup(TagNum(groupNumber), groups: _*)
+}
+
 
 case class FixStructure(elements: FixElement*) extends FixElement {
   lazy val flatten = elements.map(_.flatten).flatten.toList
