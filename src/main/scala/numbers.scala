@@ -28,7 +28,7 @@ class Decimal(bd: java.math.BigDecimal) extends BigDecimal(bd, MathContext.DECIM
   def this(i: Int) = this(BigDecimal(i))
   def this(l: Long) = this(BigDecimal(l))
 
-  def toPlainString = if (this == 0) "0" else bigDecimal.toPlainString
+  def toPlainString = if (this == BigDecimal(0)) "0" else bigDecimal.toPlainString
 
   def +(that: Decimal): Decimal = Decimal(super.+(that))
   def -(that: Decimal): Decimal = Decimal(super.-(that))

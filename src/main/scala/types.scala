@@ -37,7 +37,10 @@ Though FIX integers are unbounded and modeled as ASCII strings, we are going to 
 Quantities are covered with Decimal type, and for all other purposes the Int should be enough for everyone.
 */
 
-case class FixInteger(override val value: Int) extends FixValue[Int]
+class FixInteger(override val value: Int) extends FixValue[Int]
+object FixInteger {
+  def apply(value: Int) = new FixInteger(value)
+}
 
 case class Length(length: Int) extends FixInteger(length) {
 
@@ -68,7 +71,10 @@ case class DayOfMonth(day: Int) extends FixInteger(day) {
 Here we are going to use our very own Decimal implementation. It is based on Scala's BigDecimal, but stripped to
 DECIMAL64 representation for performance and convenience purposes. Some useful scaling methods are also added.
 */
-case class FixFloat(override val value: Decimal) extends FixValue[Decimal]
+class FixFloat(override val value: Decimal) extends FixValue[Decimal]
+object FixFloat {
+  def apply(value: Decimal) = new FixFloat(value)
+}
 
 case class Qty(quantity: Decimal) extends FixFloat(quantity)
 
@@ -85,13 +91,19 @@ case class Percentage(ratio: Decimal) extends FixFloat(ratio) {
 
 /*!## "Char" types. There is only one char-based type, which is a boolean (go figure) */
 
-case class FixChar(override val value: Char) extends FixValue[Char]
+class FixChar(override val value: Char) extends FixValue[Char]
+object FixChar {
+  def apply(value: Char) = new FixChar(value)
+}
 
 case class FixBoolean(booleanValue: Boolean) extends FixChar(if (booleanValue) 'Y' else 'N')
 
 /*!## "String" types, which are many */
 
-case class FixString(override val value: String) extends FixValue[String]
+class FixString(override val value: String) extends FixValue[String]
+object FixString {
+  def apply(value: String) = new FixString(value)
+}
 
 case class MultipleCharValue(chars: Char*) extends FixString(chars.mkString(" "))
 
@@ -240,7 +252,10 @@ case class Tenor(override val value: String) extends Pattern[String] {
   def isValid = value.matches("""^[DMWY]\d+$""")
 }
 
-sealed abstract class FixElement
+sealed trait FixElement {
+  def flatten: List[FixElement]
+  override def toString = flatten.map(_.toString).mkString(" | ")
+}
 
 case class FixField(tag: TagNum, value: FixValue[Any]) extends FixElement {
 
@@ -249,15 +264,21 @@ case class FixField(tag: TagNum, value: FixValue[Any]) extends FixElement {
   lazy val tagNumber = tag.value
 
   override def toString = tagNumber.toString + "=" + value.toString
+
+  def flatten = List(this)
 }
 
-case class FixRepeatingGroup(groups: List[FixElement]*) extends FixElement {
+case class FixRepeatingGroup(groupTag: TagNum, groups: List[FixElement]*) extends FixElement {
 
   require(groups.forall(e => e.size > 0 && e(0).isInstanceOf[FixField]) &&
     groups.map(_(0).asInstanceOf[FixField].tagNumber).toSet.size == 1,
       "Group validation failed")
 
   def size = groups.length
+
+  lazy val flatten = FixField(groupTag, NumInGroup(size)) :: groups.flatten.toList
 }
 
-case class FixStructure(elements: FixElement*) extends FixElement
+case class FixStructure(elements: FixElement*) extends FixElement {
+  lazy val flatten = elements.map(_.flatten).flatten.toList
+}
