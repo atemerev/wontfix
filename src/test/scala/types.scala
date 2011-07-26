@@ -26,4 +26,10 @@ class FixTypesSuite extends FunSuite {
     assert ("52=20110726-19:22:00.273 | 55=EUR/USD | 268=2 | 269=0 | 270=1.40546 | 271=1000000 | 269=1 | 270=1.40550 | 271=1000000" ===
       snapshot.toString)
   }
+
+  test("timestamp serialization") {
+    val ts = TZTimestamp(someDate, 5400000)
+    println(ts)
+    assert(ts === TZTimestamp(ts.toBytes))
+  }
 }

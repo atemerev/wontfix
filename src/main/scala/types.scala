@@ -301,11 +301,11 @@ case class TZTimeOnly(hour: Int, minute: Int, second: Int, offset: Int) extends 
 object TZTimeOnly extends DeserializableBytes[TZTimeOnly] {
   def apply(data: Array[Byte]) = try {
     val v = new String(data, ASCII)
-    val Extractor = """^(\S+)(Z|\+\d\d\d\d|\-\d\d\d\d)$""".r
+    val Extractor = """^(\S+?)(Z|\+\d\d\:\d\d|\-\d\d\:\d\d)$""".r
     val Extractor(time, tz) = v
     val TimeExtractor = """^(\d\d):(\d\d):(\d\d)$""".r
     val TimeExtractor(hour, minute, second) = time
-    val TzExtractor = """^(\+|\-)(\d\d)(\d\d)$""".r
+    val TzExtractor = """^(\+|\-)(\d\d)\:(\d\d)$""".r
     val TzExtractor(sign, offsetH, offsetM) = tz
     val offset = (offsetH.toInt * 3600000 + offsetM.toInt * 60000) *
       (if (sign == "+") 1 else if (sign == "-") -1 else throw new ParseError("Incorrect sign in expression: " + v))
@@ -325,10 +325,10 @@ case class TZTimestamp(timestamp: Date, offset: Int) extends FixString({
 object TZTimestamp extends DeserializableBytes[TZTimestamp] {
   def apply(data: Array[Byte]) = try {
     val v = new String(data, ASCII)
-    val Extractor = """^(\S+)(Z|\+\d\d\d\d|\-\d\d\d\d)$""".r
+    val Extractor = """^(\S+?)(Z|\+\d\d\:\d\d|\-\d\d\:\d\d)$""".r
     val Extractor(time, tz) = v
     val ts = if (time.matches("\\.\\d+$")) UTCUtil.formatMillis.parse(time) else UTCUtil.format.parse(time)
-    val TzExtractor = """^(\+|\-)(\d\d)(\d\d)$""".r
+    val TzExtractor = """^(\+|\-)(\d\d)\:(\d\d)$""".r
     val TzExtractor(sign, offsetH, offsetM) = tz
     val offset = (offsetH.toInt * 3600000 + offsetM.toInt * 60000) *
       (if (sign == "+") 1 else if (sign == "-") -1 else throw new ParseError("Incorrect sign in expression: " + v))
