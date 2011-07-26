@@ -21,12 +21,10 @@ package com.miriamlaurel.wontfix.codec
 
 import com.miriamlaurel.wontfix.util._
 import com.miriamlaurel.wontfix.types._
+import com.miriamlaurel.wontfix.structure._
 import java.nio.charset.Charset
 import xml.Elem
 import com.miriamlaurel.wontfix.numbers.Decimal
-import java.util.Date
-
-case class ParseError(message: String) extends RuntimeException(message)
 
 trait ByteCodec {
   def encode(message: FixMessage): Array[Byte]
@@ -38,76 +36,36 @@ class FixtpCodec(val version: String, dictionary: Elem) extends ByteCodec {
 
   val fields = dictionary \\ "fields" \ "field"
   val typeMap = Map(fields.map(f => ((f \ "@number").text.toInt -> ((f \ "@type").text match {
-    case "STRING" => FixString(_: String)
-    case "CHAR" => v: String => FixChar(v.toCharArray()(0))
-    case "INT" => v: String => FixInteger(v.toInt)
-    case "FLOAT" => v: String => FixFloat(Decimal(v))
-    case "LENGTH" => v: String => Length(v.toInt)
-    case "SEQNUM" => v: String => SeqNum(v.toInt)
-    case "NUMINGROUP" => v: String => NumInGroup(v.toInt)
-    case "DAY-OF-MONTH" => v: String => DayOfMonth(v.toInt)
-    case "QTY" => v: String => Qty(Decimal(v))
-    case "PRICE" => v: String => Price(Decimal(v))
-    case "PRICEOFFSET" => v: String => PriceOffset(Decimal(v))
-    case "AMT" => v: String => Amt(Decimal(v))
-    case "PERCENTAGE" => v: String => Percentage(Decimal(v))
-    case "BOOLEAN" => v: String => FixBoolean(if (v == "Y") true
-      else if (v == "N") false
-      else throw new ParseError("Unknown boolean value: " + v))
-    case "MULTIPLECHARVALUE" => v: String => MultipleCharValue(v.split(" ").map(_.toCharArray()(0)): _*)
-    case "MULTIPLESTRINGVALUE" => v: String => MultipleStringValue(v.split(" "): _*)
-    case "COUNTRY" => v: String => Country(v)
-    case "CURRENCY" => v: String => Currency(v)
-    case "EXCHANGE" => v: String => Exchange(v)
-    case "MONTH-YEAR" => v: String => try {
-      val Extractor = """^(\d\d\d\d)(\d\d)(\d\d|w\d)?$""".r
-      val Extractor(year, month, dayOrWeek) = v
-      if (dayOrWeek.matches("^$")) MonthYear(year.toInt, month.toInt, None, None) else
-      if (dayOrWeek.matches("^\\d\\d$")) MonthYear(year.toInt, month.toInt, Some(dayOrWeek.toInt), None) else
-      if (dayOrWeek.matches("^w\\d$")) MonthYear(year.toInt, month.toInt, None, Some(dayOrWeek.substring(1).toInt))
-      else throw ParseError("Unknown MonthYear value: " + v)
-    } catch {case e: Exception => throw new ParseError(e.getMessage)}
-    case "UTCTIMESTAMP" => v: String => try {
-      val ts = if (v.matches("\\.\\d+$")) UTCUtil.formatMillis.parse(v) else UTCUtil.format.parse(v)
-      UTCTimestamp(ts)
-    } catch {case e: Exception => throw new ParseError(e.getMessage)}
-    case "UTCTIMEONLY" => v: String => try {
-      val Extractor = """^(\d\d):(\d\d):(\d\d)\.?(\d\d\d)?$""".r
-      val Extractor(hour, minute, second, millis) = v
-      UTCTimeOnly(hour.toInt, minute.toInt, second.toInt, if (millis == "") 0 else millis.toInt)
-    } catch {case e: Exception => throw new ParseError(e.getMessage)}
-    case "LOCALMKTDATE" => v: String => try {
-      val Extractor = """^(\d\d\d\d)(\d\d)(\d\d)$""".r
-      val Extractor(year, month, day) = v
-      LocalMktDate(year.toInt, month.toInt, day.toInt)
-    } catch {case e: Exception => throw new ParseError(e.getMessage)}
-    case "TZTIMEONLY" => v: String => try {
-      val Extractor = """^(\S+)(Z|\+\d\d\d\d|\-\d\d\d\d)$""".r
-      val Extractor(time, tz) = v
-      val TimeExtractor = """^(\d\d):(\d\d):(\d\d)$""".r
-      val TimeExtractor(hour, minute, second) = time
-      val TzExtractor = """^(\+|\-)(\d\d)(\d\d)$""".r
-      val TzExtractor(sign, offsetH, offsetM) = tz
-      val offset = (offsetH.toInt * 3600000 + offsetM.toInt * 60000) *
-        (if (sign == "+") 1 else if (sign == "-") -1 else throw new ParseError("Incorrect sign in expression: " + v))
-      TZTimeOnly(hour.toInt, minute.toInt, second.toInt, offset)
-    } catch {case e: Exception => throw new ParseError(e.getMessage)}
-    case "TZTIMESTAMP" => v: String => try {
-      val Extractor = """^(\S+)(Z|\+\d\d\d\d|\-\d\d\d\d)$""".r
-      val Extractor(time, tz) = v
-      val ts = if (v.matches("\\.\\d+$")) UTCUtil.formatMillis.parse(v) else UTCUtil.format.parse(v)
-      val TzExtractor = """^(\+|\-)(\d\d)(\d\d)$""".r
-      val TzExtractor(sign, offsetH, offsetM) = tz
-      val offset = (offsetH.toInt * 3600000 + offsetM.toInt * 60000) *
-        (if (sign == "+") 1 else if (sign == "-") -1 else throw new ParseError("Incorrect sign in expression: " + v))
-      val corrected = new Date(ts.getTime - offset)
-      TZTimestamp(corrected, offset)
-    } catch {case e: Exception => throw new ParseError(e.getMessage)}
-    case "DATA" => v: String => Data(v.getBytes(UTF8))
+    case "STRING" => data: Array[Byte] => FixString(data)
+    case "CHAR" => data: Array[Byte] => FixChar(data)
+    case "INT" => data: Array[Byte] => FixInteger(data)
+    case "FLOAT" => data: Array[Byte] => FixFloat(data)
+    case "LENGTH" => data: Array[Byte] => Length(data)
+    case "SEQNUM" => data: Array[Byte] => SeqNum(data)
+    case "NUMINGROUP" => data: Array[Byte] => NumInGroup(data)
+    case "DAY-OF-MONTH" => data: Array[Byte] => DayOfMonth(data)
+    case "QTY" => data: Array[Byte] => Qty(data)
+    case "PRICE" => data: Array[Byte] => Price(data)
+    case "PRICEOFFSET" => data: Array[Byte] => PriceOffset(data)
+    case "AMT" => data: Array[Byte] => Amt(data)
+    case "PERCENTAGE" => data: Array[Byte] => Percentage(data)
+    case "BOOLEAN" => data: Array[Byte] => FixBoolean(data)
+    case "MULTIPLECHARVALUE" => data: Array[Byte] => MultipleCharValue(data)
+    case "MULTIPLESTRINGVALUE" => data: Array[Byte] => MultipleStringValue(data)
+    case "COUNTRY" => data: Array[Byte] => Country(data)
+    case "CURRENCY" => data: Array[Byte] => Currency(data)
+    case "EXCHANGE" => data: Array[Byte] => Exchange(data)
+    case "MONTH-YEAR" => data: Array[Byte] => MonthYear(data)
+    case "UTCTIMESTAMP" => data: Array[Byte] => UTCTimestamp(data)
+    case "UTCTIMEONLY" => data: Array[Byte] => UTCTimeOnly(data)
+    case "LOCALMKTDATE" => data: Array[Byte] => LocalMktDate(data)
+    case "TZTIMEONLY" => data: Array[Byte] => TZTimeOnly(data)
+    case "TZTIMESTAMP" => data: Array[Byte] => TZTimestamp(data)
+    case "DATA" => data: Array[Byte] => Data(data)
     case _ => throw new ParseError("Unknown type")
   }))): _*)
 
-  private val UTF8 = Charset.forName("UTF-8")
+  private val ASCII = Charset.forName("US-ASCII")
 
   /*! Since we want something working first, we will not bother with SeqNum and SenderCompID at
       this time. */
@@ -129,7 +87,7 @@ class FixtpCodec(val version: String, dictionary: Elem) extends ByteCodec {
   }
 
   def decode(data: Array[Byte]) = {
-    val tokens = (new String(data, UTF8)).split(1.toChar).toList
+    val tokens = (new String(data, ASCII)).split(1.toChar).toList
     if (tokens.size < 3) Right(ParseError("FIX message should contain at least 3 fields")) else tokens match {
       case beginString :: bodyLength :: rest => {
         val checksumToken = rest.last
@@ -139,10 +97,10 @@ class FixtpCodec(val version: String, dictionary: Elem) extends ByteCodec {
     undefined
   }
 
-  private def fieldToBytes(field: FixField): Array[Byte] = field.toString.getBytes(UTF8) :+ 1.toByte
+  private def fieldToBytes(field: FixField): Array[Byte] = field.toString.getBytes(ASCII) :+ 1.toByte
 
   private def bytesToField(bytes: Array[Byte]): Option[FixField] = {
-    val tokens = new String(bytes, UTF8).split("=")
+    val tokens = new String(bytes, ASCII).split("=")
     undefined
   }
 }

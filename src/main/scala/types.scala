@@ -25,10 +25,23 @@ import java.text.SimpleDateFormat
 import xml._
 import java.nio.charset.Charset
 
-sealed abstract class FixValue[+T] {
+case class ParseError(message: String) extends RuntimeException(message)
+
+trait SerializableBytes {
+  val ASCII = Charset.forName("US-ASCII")
+  def toBytes: Array[Byte]
+}
+
+trait DeserializableBytes[T] {
+  val ASCII = Charset.forName("US-ASCII")
+  def apply(data: Array[Byte]): T
+}
+
+sealed abstract class FixValue[+T] extends SerializableBytes {
   def value: T
 
   override def toString = value.toString
+  def toBytes = toString.getBytes(ASCII)
 }
 
 /*!## Integer types
@@ -38,32 +51,44 @@ Quantities are covered with Decimal type, and for all other purposes the Int sho
 */
 
 class FixInteger(override val value: Int) extends FixValue[Int]
-object FixInteger {
+object FixInteger extends DeserializableBytes[FixInteger] {
   def apply(value: Int) = new FixInteger(value)
+  def apply(data: Array[Byte]) = new FixInteger(new String(data, ASCII).toInt)
 }
 
 case class Length(length: Int) extends FixInteger(length) {
-
   require(length > 0, "Only positive values are allowed")
+}
+object Length extends DeserializableBytes[Length] {
+  def apply(data: Array[Byte]) = Length(new String(data, ASCII).toInt)
 }
 
 case class TagNum(number: Int) extends FixInteger(number) {
   require(number > 0, "Only positive values are allowed")
 }
+object TagNum extends DeserializableBytes[TagNum] {
+  def apply(data: Array[Byte]) = TagNum(new String(data, ASCII).toInt)
+}
 
 case class SeqNum(number: Int) extends FixInteger(number) {
-
   require(number > 0, "Only positive values are allowed")
+}
+object SeqNum extends DeserializableBytes[SeqNum] {
+  def apply(data: Array[Byte]) = SeqNum(new String(data, ASCII).toInt)
 }
 
 case class NumInGroup(number: Int) extends FixInteger(number) {
-
   require(number > 0, "Only positive values are allowed")
+}
+object NumInGroup extends DeserializableBytes[NumInGroup] {
+  def apply(data: Array[Byte]) = NumInGroup(new String(data, ASCII).toInt)
 }
 
 case class DayOfMonth(day: Int) extends FixInteger(day) {
-
   require(day >= 1 && day <= 31, "Only values of 1..31 are allowed")
+}
+object DayOfMonth extends DeserializableBytes[DayOfMonth] {
+  def apply(data: Array[Byte]) = DayOfMonth(new String(data, ASCII).toInt)
 }
 
 /*!## "Float" (i.e. Decimal) types
@@ -72,59 +97,87 @@ Here we are going to use our very own Decimal implementation. It is based on Sca
 DECIMAL64 representation for performance and convenience purposes. Some useful scaling methods are also added.
 */
 class FixFloat(override val value: Decimal) extends FixValue[Decimal]
-object FixFloat {
+object FixFloat extends DeserializableBytes[FixFloat] {
   def apply(value: Decimal) = new FixFloat(value)
+  def apply(data: Array[Byte]) = FixFloat(Decimal(new String(data, ASCII)))
 }
 
 case class Qty(quantity: Decimal) extends FixFloat(quantity)
+object Qty extends DeserializableBytes[Qty] {
+  def apply(data: Array[Byte]) = Qty(Decimal(new String(data, ASCII)))
+}
 
 case class Price(price: Decimal) extends FixFloat(price)
+object Price extends DeserializableBytes[Price] {
+  def apply(data: Array[Byte]) = Price(Decimal(new String(data, ASCII)))
+}
 
 case class PriceOffset(offset: Decimal) extends FixFloat(offset)
+object PriceOffset extends DeserializableBytes[PriceOffset] {
+  def apply(data: Array[Byte]) = PriceOffset(Decimal(new String(data, ASCII)))
+}
 
 case class Amt(amount: Decimal) extends FixFloat(amount)
+object Amt extends DeserializableBytes[Amt] {
+  def apply(data: Array[Byte]) = Amt(Decimal(new String(data, ASCII)))
+}
 
 case class Percentage(ratio: Decimal) extends FixFloat(ratio) {
-
   override def toString = (value * 100).toString + "%"
+}
+object Percentage extends DeserializableBytes[Percentage] {
+  def apply(data: Array[Byte]) = Percentage(Decimal(new String(data, ASCII)))
 }
 
 /*!## "Char" types. There is only one char-based type, which is a boolean (go figure) */
 
 class FixChar(override val value: Char) extends FixValue[Char]
-object FixChar {
+object FixChar extends DeserializableBytes[FixChar] {
   def apply(value: Char) = new FixChar(value)
+  def apply(data: Array[Byte]) = FixChar(data(0).toChar)
 }
 
 case class FixBoolean(booleanValue: Boolean) extends FixChar(if (booleanValue) 'Y' else 'N')
+object FixBoolean extends DeserializableBytes[FixBoolean] {
+  def apply(data: Array[Byte]) = if (data(0).toChar == 'Y') FixBoolean(true) else
+    if (data(0).toChar == 'N') FixBoolean(false) else
+    throw ParseError("Invalid boolean char: " + data(0))
+}
 
 /*!## "String" types, which are many */
 
 class FixString(override val value: String) extends FixValue[String]
-object FixString {
+object FixString extends DeserializableBytes[FixString] {
   def apply(value: String) = new FixString(value)
+  def apply(data: Array[Byte]) = FixString(new String(data, ASCII))
 }
 
 case class MultipleCharValue(chars: Char*) extends FixString(chars.mkString(" "))
+object MultipleCharValue extends DeserializableBytes[MultipleCharValue] {
+  def apply(data: Array[Byte]) = MultipleCharValue((new String(data, ASCII)).split(" ").map(_.toCharArray()(0)): _*)
+}
 
 case class MultipleStringValue(strings: String*) extends FixString(strings.mkString(" ")) {
   require(strings.forall(! _.contains(" ")))
+}
+object MultipleStringValue extends DeserializableBytes[MultipleStringValue] {
+  def apply(data: Array[Byte]) = MultipleStringValue((new String(data, ASCII)).split(" "): _*)
 }
 
 case class Country(code: String) extends FixString(code) {
   require(Country.isCountryCode(code))
 }
-
-object Country {
+object Country extends DeserializableBytes[Country] {
   val codes = Locale.getISOCountries;
+  def apply(data: Array[Byte]) = Country(new String(data, ASCII))
   def isCountryCode(string: String): Boolean = codes.contains(string)
 }
 
 case class Currency(code: String) extends FixString(code) {
   require(Currency.isCurrencyCode(code))
 }
-
-object Currency {
+object Currency extends DeserializableBytes[Currency] {
+  def apply(data: Array[Byte]) = Currency(new String(data, ASCII))
   def isCurrencyCode(string: String): Boolean = try {
     java.util.Currency.getInstance(string)
     true
@@ -137,9 +190,11 @@ object Currency {
 case class Exchange(code: String) extends FixString(code) {
   require(code.matches("""^[A-Z]+$"""))
 }
+object Exchange extends DeserializableBytes[Exchange] {
+  def apply(data: Array[Byte]) = Exchange(new String(data, ASCII))
+}
 
 case class MonthYear(year: Int, month: Int, day: Option[Int], week: Option[Int]) extends FixString({
-
   // So, you need a non-trivial second constructor? Can do!
   val dayString = day match {
     case Some(d) => "%02d".format(d)
@@ -160,7 +215,17 @@ case class MonthYear(year: Int, month: Int, day: Option[Int], week: Option[Int])
 
   def this(year: Int, month: Int) = this(year, month, None, None)
   def this(year: Int, month: Int, day: Int) = this(year, month, Some(day), None)
-
+}
+object MonthYear extends DeserializableBytes[MonthYear] {
+  def apply(data: Array[Byte]) = try {
+    val v = new String(data, ASCII)
+    val Extractor = """^(\d\d\d\d)(\d\d)(\d\d|w\d)?$""".r
+    val Extractor(year, month, dayOrWeek) = v
+    if (dayOrWeek.matches("^$")) MonthYear(year.toInt, month.toInt, None, None) else
+    if (dayOrWeek.matches("^\\d\\d$")) MonthYear(year.toInt, month.toInt, Some(dayOrWeek.toInt), None) else
+    if (dayOrWeek.matches("^w\\d$")) MonthYear(year.toInt, month.toInt, None, Some(dayOrWeek.substring(1).toInt))
+    else throw ParseError("Unknown MonthYear value: " + v)
+  } catch {case e: Exception => throw new ParseError(e.getMessage)}
 }
 
 /*! Technically we would need to clearly discriminate between .000 and no milliseconds at all, but in Wontfix,
@@ -170,7 +235,13 @@ case class UTCTimestamp(timestamp: Date) extends FixString(
   if (timestamp.getTime % 1000 == 0) UTCUtil.format.format(timestamp)
               else UTCUtil.formatMillis.format(timestamp)
 )
-
+object UTCTimestamp extends DeserializableBytes[UTCTimestamp] {
+  def apply(data: Array[Byte]) = try {
+    val v = new String(data, ASCII)
+    val ts = if (v.matches("\\.\\d+$")) UTCUtil.formatMillis.parse(v) else UTCUtil.format.parse(v)
+    UTCTimestamp(ts)
+  } catch {case e: Exception => throw new ParseError(e.getMessage)}
+}
 object UTCUtil {
   val UTC = TimeZone.getTimeZone("UTC")
 
@@ -190,13 +261,28 @@ case class UTCTimeOnly(hour: Int, minute: Int, second: Int, millis: Int) extends
   require(second >= 0 && second <= 59, "Seconds should be 0..59")
   require(millis >= 0 && millis <= 999, "Millis should be 0..999")
 }
+object UTCTimeOnly extends DeserializableBytes[UTCTimeOnly] {
+  def apply(data: Array[Byte]) = try {
+    val v = new String(data, ASCII)
+    val Extractor = """^(\d\d):(\d\d):(\d\d)\.?(\d\d\d)?$""".r
+    val Extractor(hour, minute, second, millis) = v
+    UTCTimeOnly(hour.toInt, minute.toInt, second.toInt, if (millis == "") 0 else millis.toInt)
+  } catch {case e: Exception => throw new ParseError(e.getMessage)}
+}
 
 case class LocalMktDate(year: Int, month: Int, day: Int) extends FixString("%04d%02d%02d".format(year, month, day)) {
   require(year >= 0 && year <= 9999, "Year should be 0..9999")
   require(month >= 1 && month <= 12, "Month should be 1..12")
   require(day >= 1 && day <= 31, "Day should be 1..31")
 }
-
+object LocalMktDate extends DeserializableBytes[LocalMktDate] {
+  def apply(data: Array[Byte]) = try {
+    val v = new String(data, ASCII)
+    val Extractor = """^(\d\d\d\d)(\d\d)(\d\d)$""".r
+    val Extractor(year, month, day) = v
+    LocalMktDate(year.toInt, month.toInt, day.toInt)
+  } catch {case e: Exception => throw new ParseError(e.getMessage)}
+}
 object TZUtil {
   def offsetHour(offset: Long): Int = (offset / 3600000).intValue()
   def offsetMinute(offset: Long): Int = ((offset % 3600000) / 60000).intValue()
@@ -208,10 +294,23 @@ case class TZTimeOnly(hour: Int, minute: Int, second: Int, offset: Int) extends 
     "%02d".format(TZUtil.offsetMinute(offset))
   timeString + offsetString
 }) {
-
   require(hour >= 0 && hour <= 23, "Hours should be 0..23")
   require(minute >= 0 && minute <= 59, "Minutes should be 0..59")
   require(second >= 0 && second <= 59, "Seconds should be 0..59")
+}
+object TZTimeOnly extends DeserializableBytes[TZTimeOnly] {
+  def apply(data: Array[Byte]) = try {
+    val v = new String(data, ASCII)
+    val Extractor = """^(\S+)(Z|\+\d\d\d\d|\-\d\d\d\d)$""".r
+    val Extractor(time, tz) = v
+    val TimeExtractor = """^(\d\d):(\d\d):(\d\d)$""".r
+    val TimeExtractor(hour, minute, second) = time
+    val TzExtractor = """^(\+|\-)(\d\d)(\d\d)$""".r
+    val TzExtractor(sign, offsetH, offsetM) = tz
+    val offset = (offsetH.toInt * 3600000 + offsetM.toInt * 60000) *
+      (if (sign == "+") 1 else if (sign == "-") -1 else throw new ParseError("Incorrect sign in expression: " + v))
+    TZTimeOnly(hour.toInt, minute.toInt, second.toInt, offset)
+  } catch {case e: Exception => throw new ParseError(e.getMessage)}
 }
 
 case class TZTimestamp(timestamp: Date, offset: Int) extends FixString({
@@ -223,75 +322,50 @@ case class TZTimestamp(timestamp: Date, offset: Int) extends FixString({
                        else sign + "%02d:%02d".format(TZUtil.offsetHour(offset), TZUtil.offsetMinute(offset))
   format.format(corrected) + timeZoneString
 })
-
-case class Data(data: Array[Byte]) extends FixString(new String(data, Charset.forName("UTF-8"))) {
-
-  def this(s: String) = this(s.getBytes)
-
-  def length = data.length
+object TZTimestamp extends DeserializableBytes[TZTimestamp] {
+  def apply(data: Array[Byte]) = try {
+    val v = new String(data, ASCII)
+    val Extractor = """^(\S+)(Z|\+\d\d\d\d|\-\d\d\d\d)$""".r
+    val Extractor(time, tz) = v
+    val ts = if (time.matches("\\.\\d+$")) UTCUtil.formatMillis.parse(time) else UTCUtil.format.parse(time)
+    val TzExtractor = """^(\+|\-)(\d\d)(\d\d)$""".r
+    val TzExtractor(sign, offsetH, offsetM) = tz
+    val offset = (offsetH.toInt * 3600000 + offsetM.toInt * 60000) *
+      (if (sign == "+") 1 else if (sign == "-") -1 else throw new ParseError("Incorrect sign in expression: " + v))
+    val corrected = new Date(ts.getTime - offset)
+    TZTimestamp(corrected, offset)
+  } catch {case e: Exception => throw new ParseError(e.getMessage)}
 }
 
-case class XMLData(xml: Elem) extends FixString(xml.toString) {
+case class Data(data: Array[Byte]) extends FixString(new String(data, Charset.forName("UTF-8"))) {
+  def length = data.length
+}
+object Data extends DeserializableBytes[Data] {
+  def apply(s: String): Data = Data(s.getBytes(ASCII))
+}
 
-  def this(s: String) = this(XML.load(s))
+case class XMLData(xml: Elem) extends FixString(xml.toString)
+object XMLData extends DeserializableBytes[XMLData] {
+  def apply(s: String): XMLData = XMLData(XML.loadString(s))
+  def apply(data: Array[Byte]): XMLData = XMLData(new String(data, ASCII))
 }
 
 case class Language(code: String) extends FixString(code) {
   // todo more strict ISO 639-1 check
   require(code.matches("""^[a-z][a-z]$"""), "Only ISO 639-1 language codes are supported")
 }
+object Language extends DeserializableBytes[Language] {
+  def apply(data: Array[Byte]) = Language(new String(data, ASCII))
+}
 
 abstract class Pattern[T] extends FixValue[T] {
-
   require(isValid, "Pattern validation failed")
-
   def isValid: Boolean
 }
 
 case class Tenor(override val value: String) extends Pattern[String] {
   def isValid = value.matches("""^[DMWY]\d+$""")
 }
-
-sealed trait FixElement {
-  def flatten: List[FixField]
-  override def toString: String = flatten.map(field => field.toString).mkString(" | ")
+object Tenor extends DeserializableBytes[Tenor] {
+  def apply(data: Array[Byte]) = Tenor(new String(data, ASCII))
 }
-
-case class FixField(tag: TagNum, value: FixValue[Any]) extends FixElement {
-
-  def this(tagNumber: Int, value: FixValue[Any]) = this(TagNum(tagNumber), value)
-
-  lazy val tagNumber = tag.value
-
-  override def toString: String = tagNumber.toString + "=" + value.toString
-
-  def flatten = List(this)
-}
-
-object FixField {
-  def apply(tagNumber: Int, value: FixValue[Any]) = new FixField(TagNum(tagNumber), value)
-  def apply(tagNumber: Int, value: Int) = new FixField(TagNum(tagNumber), FixInteger(value))
-  def apply(tagNumber: Int, value: Decimal) = new FixField(TagNum(tagNumber), FixFloat(value))
-  def apply(tagNumber: Int, value: Char) = new FixField(TagNum(tagNumber), FixChar(value))
-  def apply(tagNumber: Int, value: String) = new FixField(TagNum(tagNumber), FixString(value))
-}
-
-case class FixRepeatingGroup(groupTag: TagNum, groups: List[FixElement]*) extends FixElement {
-
-  require(groups.forall(e => e.size > 0 && e(0).isInstanceOf[FixField]) &&
-    groups.map(_(0).asInstanceOf[FixField].tagNumber).toSet.size == 1,
-      "Group validation failed")
-
-  def size = groups.length
-
-  lazy val flatten = FixField(groupTag, NumInGroup(size)) :: groups.flatten.map(_.flatten).flatten.toList
-}
-object FixRepeatingGroup {
-  def apply(groupNumber: Int, groups: List[FixElement]*) = new FixRepeatingGroup(TagNum(groupNumber), groups: _*)
-}
-
-case class FixStructure(elements: FixElement*) extends FixElement {
-  lazy val flatten = elements.map(_.flatten).flatten.toList
-}
-
-case class FixMessage(msgType: String, structure: FixStructure)

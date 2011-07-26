@@ -1,7 +1,9 @@
-package com.miriamlaurel.wontfix.types
+package com.miriamlaurel.wontfix.test.types
 
 import org.scalatest.FunSuite
 import com.miriamlaurel.wontfix.numbers.Decimal
+import com.miriamlaurel.wontfix.types._
+import com.miriamlaurel.wontfix.structure._
 
 class FixTypesSuite extends FunSuite {
   test("complex FIX structure flattens correctly") {
