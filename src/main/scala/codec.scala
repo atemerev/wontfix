@@ -59,12 +59,50 @@ class FixtpCodec(val version: String, dictionary: Elem) extends ByteCodec {
     case "COUNTRY" => v: String => Country(v)
     case "CURRENCY" => v: String => Currency(v)
     case "EXCHANGE" => v: String => Exchange(v)
-    case "MONTH-YEAR" => v: String => MonthYear(0, 1, None, None) // todo fix this
-    case "UTCTIMESTAMP" => v: String => UTCTimestamp(new Date) // todo fix this
-    case "UTCTIMEONLY" => v: String => UTCTimeOnly(0, 0, 0, 0) // todo fix this
-    case "LOCALMKTDATE" => v: String => LocalMktDate(0, 1, 1) // todo fix this
-    case "TZTIMEONLY" => v: String => TZTimeOnly(0, 0, 0, UTCUtil.UTC) // todo fix this
-    case "TZTIMESTAMP" => v: String => TZTimestamp(new Date, UTCUtil.UTC) // todo fix this
+    case "MONTH-YEAR" => v: String => try {
+      val Extractor = """^(\d\d\d\d)(\d\d)(\d\d|w\d)?$""".r
+      val Extractor(year, month, dayOrWeek) = v
+      if (dayOrWeek.matches("^$")) MonthYear(year.toInt, month.toInt, None, None) else
+      if (dayOrWeek.matches("^\\d\\d$")) MonthYear(year.toInt, month.toInt, Some(dayOrWeek.toInt), None) else
+      if (dayOrWeek.matches("^w\\d$")) MonthYear(year.toInt, month.toInt, None, Some(dayOrWeek.substring(1).toInt))
+      else throw ParseError("Unknown MonthYear value: " + v)
+    } catch {case e: Exception => throw new ParseError(e.getMessage)}
+    case "UTCTIMESTAMP" => v: String => try {
+      val ts = if (v.matches("\\.\\d+$")) UTCUtil.formatMillis.parse(v) else UTCUtil.format.parse(v)
+      UTCTimestamp(ts)
+    } catch {case e: Exception => throw new ParseError(e.getMessage)}
+    case "UTCTIMEONLY" => v: String => try {
+      val Extractor = """^(\d\d):(\d\d):(\d\d)\.?(\d\d\d)?$""".r
+      val Extractor(hour, minute, second, millis) = v
+      UTCTimeOnly(hour.toInt, minute.toInt, second.toInt, if (millis == "") 0 else millis.toInt)
+    } catch {case e: Exception => throw new ParseError(e.getMessage)}
+    case "LOCALMKTDATE" => v: String => try {
+      val Extractor = """^(\d\d\d\d)(\d\d)(\d\d)$""".r
+      val Extractor(year, month, day) = v
+      LocalMktDate(year.toInt, month.toInt, day.toInt)
+    } catch {case e: Exception => throw new ParseError(e.getMessage)}
+    case "TZTIMEONLY" => v: String => try {
+      val Extractor = """^(\S+)(Z|\+\d\d\d\d|\-\d\d\d\d)$""".r
+      val Extractor(time, tz) = v
+      val TimeExtractor = """^(\d\d):(\d\d):(\d\d)$""".r
+      val TimeExtractor(hour, minute, second) = time
+      val TzExtractor = """^(\+|\-)(\d\d)(\d\d)$""".r
+      val TzExtractor(sign, offsetH, offsetM) = tz
+      val offset = (offsetH.toInt * 3600000 + offsetM.toInt * 60000) *
+        (if (sign == "+") 1 else if (sign == "-") -1 else throw new ParseError("Incorrect sign in expression: " + v))
+      TZTimeOnly(hour.toInt, minute.toInt, second.toInt, offset)
+    } catch {case e: Exception => throw new ParseError(e.getMessage)}
+    case "TZTIMESTAMP" => v: String => try {
+      val Extractor = """^(\S+)(Z|\+\d\d\d\d|\-\d\d\d\d)$""".r
+      val Extractor(time, tz) = v
+      val ts = if (v.matches("\\.\\d+$")) UTCUtil.formatMillis.parse(v) else UTCUtil.format.parse(v)
+      val TzExtractor = """^(\+|\-)(\d\d)(\d\d)$""".r
+      val TzExtractor(sign, offsetH, offsetM) = tz
+      val offset = (offsetH.toInt * 3600000 + offsetM.toInt * 60000) *
+        (if (sign == "+") 1 else if (sign == "-") -1 else throw new ParseError("Incorrect sign in expression: " + v))
+      val corrected = new Date(ts.getTime - offset)
+      TZTimestamp(corrected, offset)
+    } catch {case e: Exception => throw new ParseError(e.getMessage)}
     case "DATA" => v: String => Data(v.getBytes(UTF8))
     case _ => throw new ParseError("Unknown type")
   }))): _*)

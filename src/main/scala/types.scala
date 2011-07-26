@@ -139,13 +139,14 @@ case class Exchange(code: String) extends FixString(code) {
 }
 
 case class MonthYear(year: Int, month: Int, day: Option[Int], week: Option[Int]) extends FixString({
+
   // So, you need a non-trivial second constructor? Can do!
   val dayString = day match {
     case Some(d) => "%02d".format(d)
     case None => ""
   }
   val weekString = week match {
-    case Some(w) => "w%02d".format(w)
+    case Some(w) => "w%01d".format(w)
     case None => ""
   }
   "%04d%02d".format(year, month) + dayString + weekString
@@ -154,6 +155,7 @@ case class MonthYear(year: Int, month: Int, day: Option[Int], week: Option[Int])
   require(year >= 0 && year <= 9999, "Year should be 0..9999")
   require(month >= 1 && month <= 12, "Month should be 1..12")
   require(day.isEmpty || day.get >= 1 && day.get <= 31, "Day should be 1..31, if defined")
+  require(week.isEmpty || week.get >= 1 && week.get <= 5, "Week should be 1..5, if defined")
   require(day.isEmpty || week.isEmpty, "Day and week cannot be both defined")
 
   def this(year: Int, month: Int) = this(year, month, None, None)
@@ -200,9 +202,8 @@ object TZUtil {
   def offsetMinute(offset: Long): Int = ((offset % 3600000) / 60000).intValue()
 }
 
-case class TZTimeOnly(hour: Int, minute: Int, second: Int, tz: TimeZone) extends FixString({
+case class TZTimeOnly(hour: Int, minute: Int, second: Int, offset: Int) extends FixString({
   val timeString = "%02d:%02d:%02d".format(hour, minute, second)
-  val offset = tz.getRawOffset
   val offsetString = if (offset == 0) "" else "%+02d".format(TZUtil.offsetHour(offset)) +
     "%02d".format(TZUtil.offsetMinute(offset))
   timeString + offsetString
@@ -213,15 +214,14 @@ case class TZTimeOnly(hour: Int, minute: Int, second: Int, tz: TimeZone) extends
   require(second >= 0 && second <= 59, "Seconds should be 0..59")
 }
 
-case class TZTimestamp(timestamp: Date, tz: TimeZone) extends FixString({
+case class TZTimestamp(timestamp: Date, offset: Int) extends FixString({
   val format = if (timestamp.getTime % 1000 == 0) new SimpleDateFormat("yyyyMMdd-HH:mm:ss")
                          else new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS")
-  format.setTimeZone(tz)
-  val offset = tz.getRawOffset
+  val corrected = new Date(timestamp.getTime + offset)
   val sign = if (offset >= 0) "+" else "-"
-  val timeZoneString = if (tz == TimeZone.getTimeZone("UTC")) "Z"
+  val timeZoneString = if (offset == 0) "Z"
                        else sign + "%02d:%02d".format(TZUtil.offsetHour(offset), TZUtil.offsetMinute(offset))
-  format.format(timestamp) + timeZoneString
+  format.format(corrected) + timeZoneString
 })
 
 case class Data(data: Array[Byte]) extends FixString(new String(data, Charset.forName("UTF-8"))) {
