@@ -288,8 +288,9 @@ object TZUtil {
   def offsetMinute(offset: Long): Int = ((offset % 3600000) / 60000).intValue()
 }
 
-case class TZTimeOnly(hour: Int, minute: Int, second: Int, offset: Int) extends FixString({
+case class TZTimeOnly(hour: Int, minute: Int, second: Int, tz: TimeZone) extends FixString({
   val timeString = "%02d:%02d:%02d".format(hour, minute, second)
+  val offset = tz.getRawOffset
   val offsetString = if (offset == 0) "" else "%+02d".format(TZUtil.offsetHour(offset)) +
     "%02d".format(TZUtil.offsetMinute(offset))
   timeString + offsetString
@@ -302,38 +303,35 @@ object TZTimeOnly extends DeserializableBytes[TZTimeOnly] {
   def apply(data: Array[Byte]) = try {
     val v = new String(data, ASCII)
     val Extractor = """^(\S+?)(Z|\+\d\d\:\d\d|\-\d\d\:\d\d)$""".r
-    val Extractor(time, tz) = v
+    val Extractor(time, tzString) = v
     val TimeExtractor = """^(\d\d):(\d\d):(\d\d)$""".r
     val TimeExtractor(hour, minute, second) = time
-    val TzExtractor = """^(\+|\-)(\d\d)\:(\d\d)$""".r
-    val TzExtractor(sign, offsetH, offsetM) = tz
-    val offset = (offsetH.toInt * 3600000 + offsetM.toInt * 60000) *
-      (if (sign == "+") 1 else if (sign == "-") -1 else throw new ParseError("Incorrect sign in expression: " + v))
-    TZTimeOnly(hour.toInt, minute.toInt, second.toInt, offset)
+    val tz = TimeZone.getTimeZone("GMT" + tzString)
+    TZTimeOnly(hour.toInt, minute.toInt, second.toInt, tz)
   } catch {case e: Exception => throw new ParseError(e.getMessage)}
 }
 
-case class TZTimestamp(timestamp: Date, offset: Int) extends FixString({
+case class TZTimestamp(timestamp: Date, tz: TimeZone) extends FixString({
   val format = if (timestamp.getTime % 1000 == 0) new SimpleDateFormat("yyyyMMdd-HH:mm:ss")
                          else new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS")
-  val corrected = new Date(timestamp.getTime + offset)
+  format.setTimeZone(tz)
+  val offset = tz.getRawOffset
   val sign = if (offset >= 0) "+" else "-"
   val timeZoneString = if (offset == 0) "Z"
                        else sign + "%02d:%02d".format(TZUtil.offsetHour(offset), TZUtil.offsetMinute(offset))
-  format.format(corrected) + timeZoneString
+  format.format(timestamp) + timeZoneString
 })
 object TZTimestamp extends DeserializableBytes[TZTimestamp] {
   def apply(data: Array[Byte]) = try {
     val v = new String(data, ASCII)
     val Extractor = """^(\S+?)(Z|\+\d\d\:\d\d|\-\d\d\:\d\d)$""".r
-    val Extractor(time, tz) = v
-    val ts = if (time.matches("\\.\\d+$")) UTCUtil.formatMillis.parse(time) else UTCUtil.format.parse(time)
-    val TzExtractor = """^(\+|\-)(\d\d)\:(\d\d)$""".r
-    val TzExtractor(sign, offsetH, offsetM) = tz
-    val offset = (offsetH.toInt * 3600000 + offsetM.toInt * 60000) *
-      (if (sign == "+") 1 else if (sign == "-") -1 else throw new ParseError("Incorrect sign in expression: " + v))
-    val corrected = new Date(ts.getTime - offset)
-    TZTimestamp(corrected, offset)
+    val Extractor(time, tzString) = v
+    val tz = TimeZone.getTimeZone("GMT" + tzString)
+    val format = if (time.matches("^\\S+\\.\\d+$")) new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS")
+                           else new SimpleDateFormat("yyyyMMdd-HH:mm:ss")
+    format.setTimeZone(tz)
+    val ts = format.parse(time)
+    TZTimestamp(ts, tz)
   } catch {case e: Exception => throw new ParseError(e.getMessage)}
 }
 

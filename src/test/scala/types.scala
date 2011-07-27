@@ -28,8 +28,7 @@ class FixTypesSuite extends FunSuite {
   }
 
   test("timestamp serialization") {
-    val ts = TZTimestamp(someDate, 5400000)
-    println(ts)
+    val ts = TZTimestamp(someDate, TimeZone.getTimeZone("GMT+3:00"))
     assert(ts === TZTimestamp(ts.toBytes))
   }
 }
