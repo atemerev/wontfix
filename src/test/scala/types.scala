@@ -27,8 +27,10 @@ class FixTypesSuite extends FunSuite {
       snapshot.toString)
   }
 
-  test("timestamp serialization") {
+  test("timezone serialization") {
     val ts = TZTimestamp(someDate, TimeZone.getTimeZone("GMT+3:00"))
     assert(ts === TZTimestamp(ts.toBytes))
+    val tzTime = TZTimeOnly(18, 7, 36, TimeZone.getTimeZone("GMT+1"))
+    assert(tzTime === TZTimeOnly(tzTime.toBytes))
   }
 }

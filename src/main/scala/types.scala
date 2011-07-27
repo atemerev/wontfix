@@ -291,8 +291,9 @@ object TZUtil {
 case class TZTimeOnly(hour: Int, minute: Int, second: Int, tz: TimeZone) extends FixString({
   val timeString = "%02d:%02d:%02d".format(hour, minute, second)
   val offset = tz.getRawOffset
-  val offsetString = if (offset == 0) "" else "%+02d".format(TZUtil.offsetHour(offset)) +
-    "%02d".format(TZUtil.offsetMinute(offset))
+  val sign = if (offset >= 0) "+" else "-"
+  val offsetString = if (offset == 0) "Z" else sign + "%02d".format(TZUtil.offsetHour(offset)) +
+    ":%02d".format(TZUtil.offsetMinute(offset))
   timeString + offsetString
 }) {
   require(hour >= 0 && hour <= 23, "Hours should be 0..23")
