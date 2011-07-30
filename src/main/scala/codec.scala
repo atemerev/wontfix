@@ -88,12 +88,12 @@ class FixtpCodec(val version: String, dictionary: Elem) extends ByteCodec {
 
   def decode(data: Array[Byte]) = {
     val tokens = (new String(data, ASCII)).split(1.toChar).toList
-    if (tokens.size < 3) Right(ParseError("FIX message should contain at least 3 fields")) else tokens match {
-      case beginString :: bodyLength :: rest => {
-        val checksumToken = rest.last
+    if (tokens.size < 3) Right(ParseError("FIX message should contain at least 3 fields")) else tokens.foreach(token =>
+      bytesToField(token.getBytes()) match {
+        case Some(field) => field
+        case None => throw new ParseError("Can't parse FIX field: " + token)
       }
-      case _ => undefined
-    }
+    )
     undefined
   }
 

@@ -194,7 +194,7 @@ object Exchange extends DeserializableBytes[Exchange] {
   def apply(data: Array[Byte]) = Exchange(new String(data, ASCII))
 }
 
-case class MonthYear(year: Int, month: Int, day: Option[Int], week: Option[Int]) extends FixString({
+case class MonthYear(year: Int, month: Int, day: Option[Int] = None, week: Option[Int] = None) extends FixString({
   // So, you need a non-trivial second constructor? Can do!
   val dayString = day match {
     case Some(d) => "%02d".format(d)
@@ -212,9 +212,6 @@ case class MonthYear(year: Int, month: Int, day: Option[Int], week: Option[Int])
   require(day.isEmpty || day.get >= 1 && day.get <= 31, "Day should be 1..31, if defined")
   require(week.isEmpty || week.get >= 1 && week.get <= 5, "Week should be 1..5, if defined")
   require(day.isEmpty || week.isEmpty, "Day and week cannot be both defined")
-
-  def this(year: Int, month: Int) = this(year, month, None, None)
-  def this(year: Int, month: Int, day: Int) = this(year, month, Some(day), None)
 }
 object MonthYear extends DeserializableBytes[MonthYear] {
   def apply(data: Array[Byte]) = try {
@@ -250,6 +247,20 @@ object UTCUtil {
 
   val formatMillis = new SimpleDateFormat("yyyyMMdd-HH:mm:ss.SSS")
   formatMillis.setTimeZone(UTC)
+}
+
+case class UTCDateOnly(year: Int, month: Int, day: Int) extends FixString("%04d%02d%02d".format(year, month, day)) {
+  require(year >= 0 && year <= 9999, "Year should be 0..9999")
+  require(month >= 1 && month <= 12, "Month should be 1..12")
+  require(day >= 1 && day <= 31, "Day should be 1..31")
+}
+object UTCDateOnly extends DeserializableBytes[LocalMktDate] {
+  def apply(data: Array[Byte]) = try {
+    val v = new String(data, ASCII)
+    val Extractor = """^(\d\d\d\d)(\d\d)(\d\d)$""".r
+    val Extractor(year, month, day) = v
+    LocalMktDate(year.toInt, month.toInt, day.toInt)
+  } catch {case e: Exception => throw new ParseError(e.getMessage)}
 }
 
 case class UTCTimeOnly(hour: Int, minute: Int, second: Int, millis: Int) extends FixString({
