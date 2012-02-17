@@ -1,3 +1,22 @@
+/*
+ * WontFIX: A pragmatic Scala FIX engine.
+ *
+ * Copyright (C) 2011 Miriam Laurel Sarl.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.miriamlaurel.wontfix.parse
 
 import annotation.tailrec
@@ -7,7 +26,12 @@ import com.miriamlaurel.wontfix.types.{FixInteger, TagNum}
 
 class Parser(dictionary: FixDictionary) {
 
-  def parse(fields: Seq[FixField]): Seq[FixElement]  = parse(Seq[FixElement](), fields)
+  /**
+   * Parse raw sequence of FIX fields and find repeating groups.
+   * @param fields Sequence of raw FIX fields.
+   * @return A sequence of FIX elements, which can be fields, or repeating groups.
+   */
+  def parse(fields: Seq[FixField]): Seq[FixElement] = parse(Seq[FixElement](), fields)
 
   @tailrec
   private def parse(parsed: Seq[FixElement], rest: Seq[FixField]): Seq[FixElement] = {
@@ -21,7 +45,7 @@ class Parser(dictionary: FixDictionary) {
   }
 
   private def parseGroup(groupField: FixField, rest: Seq[FixField]): (FixRepeatingGroup, Seq[FixField]) = {
-    val allowedTags = dictionary.getTagListFor(groupField.tag)
+    val allowedTags = dictionary.getAllowedTags(groupField.tag)
     val numberOfSequences = groupField.value.asInstanceOf[FixInteger].value;
     var unparsedRest = rest
     val result = for (i <- 1 to numberOfSequences) yield {

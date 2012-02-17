@@ -1,7 +1,6 @@
 package com.miriamlaurel.wontfix.test.types
 
 import org.scalatest.FunSuite
-import com.miriamlaurel.wontfix.numbers.Decimal
 import com.miriamlaurel.wontfix.types._
 import com.miriamlaurel.wontfix.structure._
 import java.text.SimpleDateFormat
@@ -32,5 +31,9 @@ class FixTypesSuite extends FunSuite {
     assert(ts === TZTimestamp(ts.toBytes))
     val tzTime = TZTimeOnly(18, 7, 36, TimeZone.getTimeZone("GMT+1"))
     assert(tzTime === TZTimeOnly(tzTime.toBytes))
+  }
+  
+  test("FIX dictionary") {
+
   }
 }
