@@ -5,6 +5,9 @@ import com.miriamlaurel.wontfix.types._
 import com.miriamlaurel.wontfix.structure._
 import java.text.SimpleDateFormat
 import java.util.TimeZone
+import xml.XML
+import com.miriamlaurel.wontfix.dictionary.FixDictionary
+import com.miriamlaurel.wontfix.parse.Parser
 
 class FixTypesSuite extends FunSuite {
 
@@ -12,16 +15,25 @@ class FixTypesSuite extends FunSuite {
   sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
   private val someDate = sdf.parse("2011-07-26 19:22:00.273")
 
+  private val instrument = FixStructure(
+    FixField(55, "EUR/USD")
+  )
+  private val quotes = FixRepeatingGroup(268,
+    List(FixField(269, '0'), FixField(270, Price("1.40546")), FixField(271, Qty("1000000"))),
+    List(FixField(269, '1'), FixField(270, Price("1.40550")), FixField(271, Qty("1000000")))
+  )
+  private val timestamp = FixField(52, UTCTimestamp(someDate))
+  private val snapshot = FixStructure(timestamp, instrument, quotes)
+
+  private val raw = Seq[FixField](timestamp, FixField(55, "EUR/USD"), FixField(268, 2),
+    FixField(269, '0'), FixField(270, Price("1.40546")), FixField(271, Qty("1000000")),
+    FixField(269, '1'), FixField(270, Price("1.40550")), FixField(271, Qty("1000000"))
+  )
+
+  private val xml = XML.load(this.getClass.getResource("/FIX50.xml"))
+  private val dict = new FixDictionary(xml)
+
   test("complex FIX structure flattens correctly") {
-    val instrument = FixStructure(
-      FixField(55, "EUR/USD")
-    )
-    val quotes = FixRepeatingGroup(268,
-      List(FixField(269, '0'), FixField(270, Price("1.40546")), FixField(271, Qty("1000000"))),
-      List(FixField(269, '1'), FixField(270, Price("1.40550")), FixField(271, Qty("1000000")))
-    )
-    val timestamp = FixField(52, UTCTimestamp(someDate))
-    val snapshot = FixStructure(timestamp, instrument, quotes)
     assert ("52=20110726-19:22:00.273 | 55=EUR/USD | 268=2 | 269=0 | 270=1.40546 | 271=1000000 | 269=1 | 270=1.40550 | 271=1000000" ===
       snapshot.toString)
   }
@@ -34,6 +46,19 @@ class FixTypesSuite extends FunSuite {
   }
   
   test("FIX dictionary") {
+    assert(dict.isGroupTag(TagNum(73)))
+    assert(!dict.isGroupTag(TagNum(52)))
+    assert(dict.getAllowedTags(TagNum(73)) === Set(848, 120, 544, 21, 1, 77, 44,
+      59, 529, 1080, 110, 160, 1081, 376, 60, 81, 590, 121, 11, 377, 54, 1133, 229,
+      849, 75, 775, 1090, 117, 70, 192, 114, 423, 40, 355, 583, 354, 1092, 854, 100,
+      581, 427, 582, 660, 64, 528, 494, 526, 140, 847, 193, 1091, 1089, 99, 63, 589,
+      635, 126, 67, 168, 23, 203, 640, 401, 18, 210, 58, 15, 591, 432, 111).map(TagNum(_)))
+  }
 
+  test("FIX sequence parse") {
+    val parser = new Parser(dict)
+    val parsed = parser.parse(raw)
+    val s = snapshot
+    assert(parsed === s)
   }
 }

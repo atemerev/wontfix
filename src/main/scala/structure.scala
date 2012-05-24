@@ -29,8 +29,8 @@ object FixField {
 
 case class FixRepeatingGroup(groupTag: TagNum, groups: Seq[FixElement]*) extends FixElement {
 
-  require(groups.forall(e => e.size > 0 && e(0).isInstanceOf[FixField]) &&
-    groups.map(_(0).asInstanceOf[FixField].tagNumber).toSet.size == 1,
+  require(groups.forall(e => e.length > 0), "Empty groups are not allowed")
+  require(groups.map(_(0).asInstanceOf[FixField].tagNumber).toSet.size == 1,
       "Group validation failed")
 
   def size = groups.length

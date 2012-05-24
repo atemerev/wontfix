@@ -20,9 +20,9 @@
 package com.miriamlaurel.wontfix.parse
 
 import annotation.tailrec
-import com.miriamlaurel.wontfix.structure.{FixRepeatingGroup, FixField, FixElement}
 import com.miriamlaurel.wontfix.dictionary.FixDictionary
 import com.miriamlaurel.wontfix.types.{FixInteger, TagNum}
+import com.miriamlaurel.wontfix.structure.{FixStructure, FixRepeatingGroup, FixField, FixElement}
 
 class Parser(dictionary: FixDictionary) {
 
@@ -31,14 +31,14 @@ class Parser(dictionary: FixDictionary) {
    * @param fields Sequence of raw FIX fields.
    * @return A sequence of FIX elements, which can be fields, or repeating groups.
    */
-  def parse(fields: Seq[FixField]): Seq[FixElement] = parse(Seq[FixElement](), fields)
+  def parse(fields: Seq[FixField]): FixStructure = FixStructure(parse(Seq[FixElement](), fields): _*)
 
   @tailrec
   private def parse(parsed: Seq[FixElement], rest: Seq[FixField]): Seq[FixElement] = {
-    if (parsed.isEmpty) parsed else {
+    if (rest.isEmpty) parsed else {
       val next: FixField = rest.head
-      if (dictionary.isGroupTag(next.tag)) parse(parsed :+ next, rest.tail) else {
-        val (group, unparsedRest) = parseGroup(next, rest)
+      if (!dictionary.isGroupTag(next.tag)) parse(parsed :+ next, rest.tail) else {
+        val (group, unparsedRest) = parseGroup(next, rest.tail)
         parse(parsed :+ group, unparsedRest)
       }
     }
@@ -63,7 +63,7 @@ class Parser(dictionary: FixDictionary) {
       val next = rest.head
       if (!allowed.contains(next.tag)) Pair(parsed, rest)
       else if (!dictionary.isGroupTag(next.tag)) parseSeq(parsed :+ next, rest.tail, allowed - next.tag) else {
-        val (group, unparsed) = parseGroup(next, rest)
+        val (group, unparsed) = parseGroup(next, rest.tail)
         parseSeq(parsed :+ group, unparsed, allowed - next.tag)
       }
     }
