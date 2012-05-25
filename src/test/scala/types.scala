@@ -4,10 +4,10 @@ import org.scalatest.FunSuite
 import com.miriamlaurel.wontfix.types._
 import com.miriamlaurel.wontfix.structure._
 import java.text.SimpleDateFormat
-import java.util.TimeZone
 import xml.XML
 import com.miriamlaurel.wontfix.dictionary.FixDictionary
 import com.miriamlaurel.wontfix.parse.Parser
+import java.util.{Date, TimeZone}
 
 class FixTypesSuite extends FunSuite {
 
@@ -15,9 +15,8 @@ class FixTypesSuite extends FunSuite {
   sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
   private val someDate = sdf.parse("2011-07-26 19:22:00.273")
 
-  private val instrument = FixStructure(
-    FixField(55, "EUR/USD")
-  )
+  private val instrument =  FixField(55, "EUR/USD")
+
   private val quotes = FixRepeatingGroup(268,
     List(FixField(269, '0'), FixField(270, Price("1.40546")), FixField(271, Qty("1000000"))),
     List(FixField(269, '1'), FixField(270, Price("1.40550")), FixField(271, Qty("1000000")))
@@ -32,6 +31,17 @@ class FixTypesSuite extends FunSuite {
 
   private val xml = XML.load(this.getClass.getResource("/FIX50.xml"))
   private val dict = new FixDictionary(xml)
+
+  test("some simple equality tests") {
+    assert(FixInteger(42) === FixInteger(42))
+    assert(FixChar('f') === FixChar('f'))
+    assert(Country("US") === Country("US"))
+    assert(FixFloat("3.14") === FixFloat("3.14")) // we _must_ be able to compare floats like this
+    assert(Price("1.12030") === Price("1.1203"))
+    val now = new Date // todo refactor to Long
+    val now2 = new Date(now.getTime)
+    assert(UTCTimestamp(now) === UTCTimestamp(now2))
+  }
 
   test("complex FIX structure flattens correctly") {
     assert ("52=20110726-19:22:00.273 | 55=EUR/USD | 268=2 | 269=0 | 270=1.40546 | 271=1000000 | 269=1 | 270=1.40550 | 271=1000000" ===

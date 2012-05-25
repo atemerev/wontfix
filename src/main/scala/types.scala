@@ -50,7 +50,15 @@ Though FIX integers are unbounded and modeled as ASCII strings, we are going to 
 Quantities are covered with Decimal type, and for all other purposes the Int should be enough for everyone.
 */
 
-class FixInteger(override val value: Int) extends FixValue[Int]
+class FixInteger(override val value: Int) extends FixValue[Int] {
+  override def equals(other: Any): Boolean = other match {
+    case f: FixInteger => value.equals(f.value)
+    case _ => false
+  }
+
+  override def hashCode() = value.hashCode()
+}
+
 object FixInteger extends DeserializableBytes[FixInteger] {
   def apply(value: Int) = new FixInteger(value)
   def apply(data: Array[Byte]) = new FixInteger(new String(data, ASCII).toInt)
@@ -96,7 +104,15 @@ object DayOfMonth extends DeserializableBytes[DayOfMonth] {
 Here we are going to use our very own Decimal implementation. It is based on Scala's BigDecimal, but stripped to
 DECIMAL64 representation for performance and convenience purposes. Some useful scaling methods are also added.
 */
-class FixFloat(override val value: Decimal) extends FixValue[Decimal]
+class FixFloat(override val value: Decimal) extends FixValue[Decimal] {
+  override def equals(other: Any) = other match {
+    case f: FixFloat => value.equals(f.value)
+    case _ => false
+  }
+
+  override def hashCode = value.hashCode
+}
+
 object FixFloat extends DeserializableBytes[FixFloat] {
   def apply(value: Decimal) = new FixFloat(value)
   def apply(data: Array[Byte]) = FixFloat(Decimal(new String(data, ASCII)))
@@ -131,7 +147,14 @@ object Percentage extends DeserializableBytes[Percentage] {
 
 /*!## "Char" types. There is only one char-based type, which is a boolean (go figure) */
 
-class FixChar(override val value: Char) extends FixValue[Char]
+class FixChar(override val value: Char) extends FixValue[Char] {
+  override def equals(other: Any) = other match {
+    case c: FixChar => c.value == value
+    case _ => false
+  }
+  override def hashCode = value.hashCode()
+}
+
 object FixChar extends DeserializableBytes[FixChar] {
   def apply(value: Char) = new FixChar(value)
   def apply(data: Array[Byte]) = FixChar(data(0).toChar)
@@ -146,7 +169,14 @@ object FixBoolean extends DeserializableBytes[FixBoolean] {
 
 /*!## "String" types, which are many */
 
-class FixString(override val value: String) extends FixValue[String]
+class FixString(override val value: String) extends FixValue[String] {
+  override def equals(other: Any) = other match {
+    case s: FixString => value.equals(s.value)
+    case _ => false
+  }
+  override def hashCode() = value.hashCode()
+}
+
 object FixString extends DeserializableBytes[FixString] {
   def apply(value: String) = new FixString(value)
   def apply(data: Array[Byte]) = FixString(new String(data, ASCII))

@@ -46,7 +46,7 @@ class Parser(dictionary: FixDictionary) {
 
   private def parseGroup(groupField: FixField, rest: Seq[FixField]): (FixRepeatingGroup, Seq[FixField]) = {
     val allowedTags = dictionary.getAllowedTags(groupField.tag)
-    val numberOfSequences = groupField.value.asInstanceOf[FixInteger].value;
+    val numberOfSequences = groupField.value.asInstanceOf[FixInteger].value
     var unparsedRest = rest
     val result = for (i <- 1 to numberOfSequences) yield {
         val (seq, rest) = parseSeq(List.empty, unparsedRest, allowedTags)
