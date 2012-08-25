@@ -198,7 +198,7 @@ case class Country(code: String) extends FixString(code) {
   require(Country.isCountryCode(code))
 }
 object Country extends DeserializableBytes[Country] {
-  val codes = Locale.getISOCountries;
+  val codes = Locale.getISOCountries
   def apply(data: Array[Byte]) = Country(new String(data, ASCII))
   def isCountryCode(string: String): Boolean = codes.contains(string)
 }

@@ -2,6 +2,7 @@ package com.miriamlaurel.wontfix.structure
 
 import com.miriamlaurel.wontfix.numbers.Decimal
 import com.miriamlaurel.wontfix.types._
+import com.miriamlaurel.wontfix.fix50.fields.{PosAmt, PriorityIndicator, PosReqID}
 
 sealed trait FixElement {
   def flatten: Seq[FixField]
@@ -46,3 +47,9 @@ case class FixStructure(elements: FixElement*) extends FixElement {
 }
 
 case class FixMessage(msgType: String, structure: FixStructure)
+
+case class Instrument(s: PriorityIndicator, s1: Option[PosAmt] = None, s2: Option[PosReqID] = None) extends FixStructure({
+  val required: Seq[FixElement] = Seq(s)
+  val optional: Seq[FixElement] = Seq(s1, s2).flatten
+  required ++ optional
+}: _*)

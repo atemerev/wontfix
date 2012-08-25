@@ -87,6 +87,12 @@ object Codegen {
     else caseClassDef
   }
 
+  def genComponent(node: Node): String = {
+    val name = (node \ "@name").text
+
+    null
+  }
+
   def genFields(rootNode: Node): String = (rootNode \ "fields" \ "field").map(genField(_)).mkString("\n\n")
 
   def main(args: Array[String]) {
