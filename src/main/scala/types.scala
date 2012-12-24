@@ -19,7 +19,6 @@
 
 package com.miriamlaurel.wontfix.types
 
-import com.miriamlaurel.wontfix.numbers.Decimal
 import java.util.{TimeZone, Date, Locale}
 import java.text.SimpleDateFormat
 import xml._
@@ -47,7 +46,7 @@ sealed abstract class FixValue[+T] extends SerializableBytes {
 /*!## Integer types
 
 Though FIX integers are unbounded and modeled as ASCII strings, we are going to use Scala's Int representation.
-Quantities are covered with Decimal type, and for all other purposes the Int should be enough for everyone.
+Quantities are covered with BigDecimal type, and for all other purposes the Int should be enough for everyone.
 */
 
 class FixInteger(override val value: Int) extends FixValue[Int] {
@@ -99,12 +98,12 @@ object DayOfMonth extends DeserializableBytes[DayOfMonth] {
   def apply(data: Array[Byte]) = DayOfMonth(new String(data, ASCII).toInt)
 }
 
-/*!## "Float" (i.e. Decimal) types
+/*!## "Float" (i.e. BigDecimal) types
 
-Here we are going to use our very own Decimal implementation. It is based on Scala's BigDecimal, but stripped to
-DECIMAL64 representation for performance and convenience purposes. Some useful scaling methods are also added.
+Here we are going to use our very own BigDecimal implementation. It is based on Scala's BigBigDecimal, but stripped to
+BigDecimal64 representation for performance and convenience purposes. Some useful scaling methods are also added.
 */
-class FixFloat(override val value: Decimal) extends FixValue[Decimal] {
+class FixFloat(override val value: BigDecimal) extends FixValue[BigDecimal] {
   override def equals(other: Any) = other match {
     case f: FixFloat => value.equals(f.value)
     case _ => false
@@ -114,35 +113,35 @@ class FixFloat(override val value: Decimal) extends FixValue[Decimal] {
 }
 
 object FixFloat extends DeserializableBytes[FixFloat] {
-  def apply(value: Decimal) = new FixFloat(value)
-  def apply(data: Array[Byte]) = FixFloat(Decimal(new String(data, ASCII)))
+  def apply(value: BigDecimal) = new FixFloat(value)
+  def apply(data: Array[Byte]) = FixFloat(BigDecimal(new String(data, ASCII)))
 }
 
-case class Qty(quantity: Decimal) extends FixFloat(quantity)
+case class Qty(quantity: BigDecimal) extends FixFloat(quantity)
 object Qty extends DeserializableBytes[Qty] {
-  def apply(data: Array[Byte]) = Qty(Decimal(new String(data, ASCII)))
+  def apply(data: Array[Byte]) = Qty(BigDecimal(new String(data, ASCII)))
 }
 
-case class Price(price: Decimal) extends FixFloat(price)
+case class Price(price: BigDecimal) extends FixFloat(price)
 object Price extends DeserializableBytes[Price] {
-  def apply(data: Array[Byte]) = Price(Decimal(new String(data, ASCII)))
+  def apply(data: Array[Byte]) = Price(BigDecimal(new String(data, ASCII)))
 }
 
-case class PriceOffset(offset: Decimal) extends FixFloat(offset)
+case class PriceOffset(offset: BigDecimal) extends FixFloat(offset)
 object PriceOffset extends DeserializableBytes[PriceOffset] {
-  def apply(data: Array[Byte]) = PriceOffset(Decimal(new String(data, ASCII)))
+  def apply(data: Array[Byte]) = PriceOffset(BigDecimal(new String(data, ASCII)))
 }
 
-case class Amt(amount: Decimal) extends FixFloat(amount)
+case class Amt(amount: BigDecimal) extends FixFloat(amount)
 object Amt extends DeserializableBytes[Amt] {
-  def apply(data: Array[Byte]) = Amt(Decimal(new String(data, ASCII)))
+  def apply(data: Array[Byte]) = Amt(BigDecimal(new String(data, ASCII)))
 }
 
-case class Percentage(ratio: Decimal) extends FixFloat(ratio) {
+case class Percentage(ratio: BigDecimal) extends FixFloat(ratio) {
   override def toString = (value * 100).toString + "%"
 }
 object Percentage extends DeserializableBytes[Percentage] {
-  def apply(data: Array[Byte]) = Percentage(Decimal(new String(data, ASCII)))
+  def apply(data: Array[Byte]) = Percentage(BigDecimal(new String(data, ASCII)))
 }
 
 /*!## "Char" types. There is only one char-based type, which is a boolean (go figure) */

@@ -21,7 +21,6 @@ package com.miriamlaurel.wontfix.fix50.fields
 
 import com.miriamlaurel.wontfix.structure._
 import com.miriamlaurel.wontfix.types
-import com.miriamlaurel.wontfix.numbers.Decimal
 import java.util.Date
 import java.util.TimeZone
 
@@ -46,7 +45,7 @@ object AdvTransType {
   val REPLACE = AdvTransType("R")
 }
 
-case class AvgPx(price: Decimal) extends FixField(6, types.Price(price))
+case class AvgPx(price: BigDecimal) extends FixField(6, types.Price(price))
 
 case class BeginSeqNo(seqNum: Int) extends FixField(7, types.SeqNum(seqNum))
 
@@ -58,7 +57,7 @@ case class CheckSum(s: String) extends FixField(10, types.FixString(s))
 
 case class ClOrdID(s: String) extends FixField(11, types.FixString(s))
 
-case class Commission(amount: Decimal) extends FixField(12, types.Amt(amount))
+case class Commission(amount: BigDecimal) extends FixField(12, types.Amt(amount))
 
 case class CommType(c: Char) extends FixField(13, types.FixChar(c))
 object CommType {
@@ -70,7 +69,7 @@ object CommType {
   val POINTS_PER_BOND_OR_OR_CONTRACT = CommType('6')
 }
 
-case class CumQty(qty: Decimal) extends FixField(14, types.Qty(qty))
+case class CumQty(qty: BigDecimal) extends FixField(14, types.Qty(qty))
 
 case class Currency(code: String) extends FixField(15, types.Currency(code))
 
@@ -208,9 +207,9 @@ object LastCapacity {
 
 case class LastMkt(code: String) extends FixField(30, types.Exchange(code))
 
-case class LastPx(price: Decimal) extends FixField(31, types.Price(price))
+case class LastPx(price: BigDecimal) extends FixField(31, types.Price(price))
 
-case class LastQty(qty: Decimal) extends FixField(32, types.Qty(qty))
+case class LastQty(qty: BigDecimal) extends FixField(32, types.Qty(qty))
 
 case class NoLinesOfText(num: Int) extends FixField(33, types.NumInGroup(num))
 
@@ -325,7 +324,7 @@ case class NewSeqNo(seqNum: Int) extends FixField(36, types.SeqNum(seqNum))
 
 case class OrderID(s: String) extends FixField(37, types.FixString(s))
 
-case class OrderQty(qty: Decimal) extends FixField(38, types.Qty(qty))
+case class OrderQty(qty: BigDecimal) extends FixField(38, types.Qty(qty))
 
 case class OrdStatus(c: Char) extends FixField(39, types.FixChar(c))
 object OrdStatus {
@@ -380,7 +379,7 @@ case class OrigTime(timestamp: Date) extends FixField(42, types.UTCTimestamp(tim
 
 case class PossDupFlag(bool: Boolean) extends FixField(43, types.FixBoolean(bool))
 
-case class Price(price: Decimal) extends FixField(44, types.Price(price))
+case class Price(price: BigDecimal) extends FixField(44, types.Price(price))
 
 case class RefSeqNum(seqNum: Int) extends FixField(45, types.SeqNum(seqNum))
 
@@ -392,7 +391,7 @@ case class SenderSubID(s: String) extends FixField(50, types.FixString(s))
 
 case class SendingTime(timestamp: Date) extends FixField(52, types.UTCTimestamp(timestamp))
 
-case class Quantity(qty: Decimal) extends FixField(53, types.Qty(qty))
+case class Quantity(qty: BigDecimal) extends FixField(53, types.Qty(qty))
 
 case class Side(c: Char) extends FixField(54, types.FixChar(c))
 object Side {
@@ -512,7 +511,7 @@ case class NoAllocs(num: Int) extends FixField(78, types.NumInGroup(num))
 
 case class AllocAccount(s: String) extends FixField(79, types.FixString(s))
 
-case class AllocQty(qty: Decimal) extends FixField(80, types.Qty(qty))
+case class AllocQty(qty: BigDecimal) extends FixField(80, types.Qty(qty))
 
 case class ProcessCode(c: Char) extends FixField(81, types.FixChar(c))
 object ProcessCode {
@@ -529,7 +528,7 @@ case class NoRpts(i: Int) extends FixField(82, types.FixInteger(i))
 
 case class RptSeq(i: Int) extends FixField(83, types.FixInteger(i))
 
-case class CxlQty(qty: Decimal) extends FixField(84, types.Qty(qty))
+case class CxlQty(qty: BigDecimal) extends FixField(84, types.Qty(qty))
 
 case class NoDlvyInst(num: Int) extends FixField(85, types.NumInGroup(num))
 
@@ -599,7 +598,7 @@ object EncryptMethod {
   val PEM_DES_MD5 = EncryptMethod(6)
 }
 
-case class StopPx(price: Decimal) extends FixField(99, types.Price(price))
+case class StopPx(price: BigDecimal) extends FixField(99, types.Price(price))
 
 case class ExDestination(code: String) extends FixField(100, types.Exchange(code))
 
@@ -670,9 +669,9 @@ case class HeartBtInt(i: Int) extends FixField(108, types.FixInteger(i))
 
 case class ClientID(s: String) extends FixField(109, types.FixString(s))
 
-case class MinQty(qty: Decimal) extends FixField(110, types.Qty(qty))
+case class MinQty(qty: BigDecimal) extends FixField(110, types.Qty(qty))
 
-case class MaxFloor(qty: Decimal) extends FixField(111, types.Qty(qty))
+case class MaxFloor(qty: BigDecimal) extends FixField(111, types.Qty(qty))
 
 case class TestReqID(s: String) extends FixField(112, types.FixString(s))
 
@@ -686,9 +685,9 @@ case class OnBehalfOfSubID(s: String) extends FixField(116, types.FixString(s))
 
 case class QuoteID(s: String) extends FixField(117, types.FixString(s))
 
-case class NetMoney(amount: Decimal) extends FixField(118, types.Amt(amount))
+case class NetMoney(amount: BigDecimal) extends FixField(118, types.Amt(amount))
 
-case class SettlCurrAmt(amount: Decimal) extends FixField(119, types.Amt(amount))
+case class SettlCurrAmt(amount: BigDecimal) extends FixField(119, types.Amt(amount))
 
 case class SettlCurrency(code: String) extends FixField(120, types.Currency(code))
 
@@ -727,17 +726,17 @@ case class IOINaturalFlag(bool: Boolean) extends FixField(130, types.FixBoolean(
 
 case class QuoteReqID(s: String) extends FixField(131, types.FixString(s))
 
-case class BidPx(price: Decimal) extends FixField(132, types.Price(price))
+case class BidPx(price: BigDecimal) extends FixField(132, types.Price(price))
 
-case class OfferPx(price: Decimal) extends FixField(133, types.Price(price))
+case class OfferPx(price: BigDecimal) extends FixField(133, types.Price(price))
 
-case class BidSize(qty: Decimal) extends FixField(134, types.Qty(qty))
+case class BidSize(qty: BigDecimal) extends FixField(134, types.Qty(qty))
 
-case class OfferSize(qty: Decimal) extends FixField(135, types.Qty(qty))
+case class OfferSize(qty: BigDecimal) extends FixField(135, types.Qty(qty))
 
 case class NoMiscFees(num: Int) extends FixField(136, types.NumInGroup(num))
 
-case class MiscFeeAmt(amount: Decimal) extends FixField(137, types.Amt(amount))
+case class MiscFeeAmt(amount: BigDecimal) extends FixField(137, types.Amt(amount))
 
 case class MiscFeeCurr(code: String) extends FixField(138, types.Currency(code))
 
@@ -759,7 +758,7 @@ object MiscFeeType {
   val SECURITY_LENDING = MiscFeeType("14")
 }
 
-case class PrevClosePx(price: Decimal) extends FixField(140, types.Price(price))
+case class PrevClosePx(price: BigDecimal) extends FixField(140, types.Price(price))
 
 case class ResetSeqNumFlag(bool: Boolean) extends FixField(141, types.FixBoolean(bool))
 
@@ -805,15 +804,15 @@ object ExecType {
   val TRIGGERED_OR_ACTIVATED_BY_SYSTEM = ExecType('L')
 }
 
-case class LeavesQty(qty: Decimal) extends FixField(151, types.Qty(qty))
+case class LeavesQty(qty: BigDecimal) extends FixField(151, types.Qty(qty))
 
-case class CashOrderQty(qty: Decimal) extends FixField(152, types.Qty(qty))
+case class CashOrderQty(qty: BigDecimal) extends FixField(152, types.Qty(qty))
 
-case class AllocAvgPx(price: Decimal) extends FixField(153, types.Price(price))
+case class AllocAvgPx(price: BigDecimal) extends FixField(153, types.Price(price))
 
-case class AllocNetMoney(amount: Decimal) extends FixField(154, types.Amt(amount))
+case class AllocNetMoney(amount: BigDecimal) extends FixField(154, types.Amt(amount))
 
-case class SettlCurrFxRate(f: Decimal) extends FixField(155, types.FixFloat(f))
+case class SettlCurrFxRate(f: BigDecimal) extends FixField(155, types.FixFloat(f))
 
 case class SettlCurrFxRateCalc(c: Char) extends FixField(156, types.FixChar(c))
 object SettlCurrFxRateCalc {
@@ -823,9 +822,9 @@ object SettlCurrFxRateCalc {
 
 case class NumDaysInterest(i: Int) extends FixField(157, types.FixInteger(i))
 
-case class AccruedInterestRate(percentage: Decimal) extends FixField(158, types.Percentage(percentage))
+case class AccruedInterestRate(percentage: BigDecimal) extends FixField(158, types.Percentage(percentage))
 
-case class AccruedInterestAmt(amount: Decimal) extends FixField(159, types.Amt(amount))
+case class AccruedInterestAmt(amount: BigDecimal) extends FixField(159, types.Amt(amount))
 
 case class SettlInstMode(c: Char) extends FixField(160, types.FixChar(c))
 object SettlInstMode {
@@ -1026,21 +1025,21 @@ case class CashSettlAgentContactName(s: String) extends FixField(186, types.FixS
 
 case class CashSettlAgentContactPhone(s: String) extends FixField(187, types.FixString(s))
 
-case class BidSpotRate(price: Decimal) extends FixField(188, types.Price(price))
+case class BidSpotRate(price: BigDecimal) extends FixField(188, types.Price(price))
 
-case class BidForwardPoints(offset: Decimal) extends FixField(189, types.PriceOffset(offset))
+case class BidForwardPoints(offset: BigDecimal) extends FixField(189, types.PriceOffset(offset))
 
-case class OfferSpotRate(price: Decimal) extends FixField(190, types.Price(price))
+case class OfferSpotRate(price: BigDecimal) extends FixField(190, types.Price(price))
 
-case class OfferForwardPoints(offset: Decimal) extends FixField(191, types.PriceOffset(offset))
+case class OfferForwardPoints(offset: BigDecimal) extends FixField(191, types.PriceOffset(offset))
 
-case class OrderQty2(qty: Decimal) extends FixField(192, types.Qty(qty))
+case class OrderQty2(qty: BigDecimal) extends FixField(192, types.Qty(qty))
 
 case class SettlDate2(year: Int, month: Int, day: Int) extends FixField(193, types.LocalMktDate(year, month, day))
 
-case class LastSpotRate(price: Decimal) extends FixField(194, types.Price(price))
+case class LastSpotRate(price: BigDecimal) extends FixField(194, types.Price(price))
 
-case class LastForwardPoints(offset: Decimal) extends FixField(195, types.PriceOffset(offset))
+case class LastForwardPoints(offset: BigDecimal) extends FixField(195, types.PriceOffset(offset))
 
 case class AllocLinkID(s: String) extends FixField(196, types.FixString(s))
 
@@ -1062,7 +1061,7 @@ object PutOrCall {
   val CALL = PutOrCall(1)
 }
 
-case class StrikePrice(price: Decimal) extends FixField(202, types.Price(price))
+case class StrikePrice(price: BigDecimal) extends FixField(202, types.Price(price))
 
 case class CoveredOrUncovered(i: Int) extends FixField(203, types.FixInteger(i))
 object CoveredOrUncovered {
@@ -1091,9 +1090,9 @@ object AllocHandlInst {
   val FORWARD_AND_MATCH = AllocHandlInst(3)
 }
 
-case class MaxShow(qty: Decimal) extends FixField(210, types.Qty(qty))
+case class MaxShow(qty: BigDecimal) extends FixField(210, types.Qty(qty))
 
-case class PegOffsetValue(f: Decimal) extends FixField(211, types.FixFloat(f))
+case class PegOffsetValue(f: BigDecimal) extends FixField(211, types.FixFloat(f))
 
 case class XmlDataLen(length: Int) extends FixField(212, types.Length(length))
 
@@ -1113,7 +1112,7 @@ object RoutingType {
 
 case class RoutingID(s: String) extends FixField(217, types.FixString(s))
 
-case class Spread(offset: Decimal) extends FixField(218, types.PriceOffset(offset))
+case class Spread(offset: BigDecimal) extends FixField(218, types.PriceOffset(offset))
 
 case class Benchmark(c: Char) extends FixField(219, types.FixChar(c))
 object Benchmark {
@@ -1148,7 +1147,7 @@ object BenchmarkCurveName {
 
 case class BenchmarkCurvePoint(s: String) extends FixField(222, types.FixString(s))
 
-case class CouponRate(percentage: Decimal) extends FixField(223, types.Percentage(percentage))
+case class CouponRate(percentage: BigDecimal) extends FixField(223, types.Percentage(percentage))
 
 case class CouponPaymentDate(year: Int, month: Int, day: Int) extends FixField(224, types.LocalMktDate(year, month, day))
 
@@ -1156,15 +1155,15 @@ case class IssueDate(year: Int, month: Int, day: Int) extends FixField(225, type
 
 case class RepurchaseTerm(i: Int) extends FixField(226, types.FixInteger(i))
 
-case class RepurchaseRate(percentage: Decimal) extends FixField(227, types.Percentage(percentage))
+case class RepurchaseRate(percentage: BigDecimal) extends FixField(227, types.Percentage(percentage))
 
-case class Factor(f: Decimal) extends FixField(228, types.FixFloat(f))
+case class Factor(f: BigDecimal) extends FixField(228, types.FixFloat(f))
 
 case class TradeOriginationDate(year: Int, month: Int, day: Int) extends FixField(229, types.LocalMktDate(year, month, day))
 
 case class ExDate(year: Int, month: Int, day: Int) extends FixField(230, types.LocalMktDate(year, month, day))
 
-case class ContractMultiplier(f: Decimal) extends FixField(231, types.FixFloat(f))
+case class ContractMultiplier(f: BigDecimal) extends FixField(231, types.FixFloat(f))
 
 case class NoStipulations(num: Int) extends FixField(232, types.NumInGroup(num))
 
@@ -1288,11 +1287,11 @@ object YieldType {
   val YIELD_TO_WORST = YieldType("WORST")
 }
 
-case class Yield(percentage: Decimal) extends FixField(236, types.Percentage(percentage))
+case class Yield(percentage: BigDecimal) extends FixField(236, types.Percentage(percentage))
 
-case class TotalTakedown(amount: Decimal) extends FixField(237, types.Amt(amount))
+case class TotalTakedown(amount: BigDecimal) extends FixField(237, types.Amt(amount))
 
-case class Concession(amount: Decimal) extends FixField(238, types.Amt(amount))
+case class Concession(amount: BigDecimal) extends FixField(238, types.Amt(amount))
 
 case class RepoCollateralSecurityType(i: Int) extends FixField(239, types.FixInteger(i))
 
@@ -1306,9 +1305,9 @@ case class UnderlyingRepoCollateralSecurityType(i: Int) extends FixField(243, ty
 
 case class UnderlyingRepurchaseTerm(i: Int) extends FixField(244, types.FixInteger(i))
 
-case class UnderlyingRepurchaseRate(percentage: Decimal) extends FixField(245, types.Percentage(percentage))
+case class UnderlyingRepurchaseRate(percentage: BigDecimal) extends FixField(245, types.Percentage(percentage))
 
-case class UnderlyingFactor(f: Decimal) extends FixField(246, types.FixFloat(f))
+case class UnderlyingFactor(f: BigDecimal) extends FixField(246, types.FixFloat(f))
 
 case class UnderlyingRedemptionDate(year: Int, month: Int, day: Int) extends FixField(247, types.LocalMktDate(year, month, day))
 
@@ -1320,9 +1319,9 @@ case class LegRepoCollateralSecurityType(i: Int) extends FixField(250, types.Fix
 
 case class LegRepurchaseTerm(i: Int) extends FixField(251, types.FixInteger(i))
 
-case class LegRepurchaseRate(percentage: Decimal) extends FixField(252, types.Percentage(percentage))
+case class LegRepurchaseRate(percentage: BigDecimal) extends FixField(252, types.Percentage(percentage))
 
-case class LegFactor(f: Decimal) extends FixField(253, types.FixFloat(f))
+case class LegFactor(f: BigDecimal) extends FixField(253, types.FixFloat(f))
 
 case class LegRedemptionDate(year: Int, month: Int, day: Int) extends FixField(254, types.LocalMktDate(year, month, day))
 
@@ -1336,7 +1335,7 @@ case class TradedFlatSwitch(bool: Boolean) extends FixField(258, types.FixBoolea
 
 case class BasisFeatureDate(year: Int, month: Int, day: Int) extends FixField(259, types.LocalMktDate(year, month, day))
 
-case class BasisFeaturePrice(price: Decimal) extends FixField(260, types.Price(price))
+case class BasisFeaturePrice(price: BigDecimal) extends FixField(260, types.Price(price))
 
 case class MDReqID(s: String) extends FixField(262, types.FixString(s))
 
@@ -1391,9 +1390,9 @@ object MDEntryType {
   val AUCTION_CLEARING_PRICE = MDEntryType('Q')
 }
 
-case class MDEntryPx(price: Decimal) extends FixField(270, types.Price(price))
+case class MDEntryPx(price: BigDecimal) extends FixField(270, types.Price(price))
 
-case class MDEntrySize(qty: Decimal) extends FixField(271, types.Qty(qty))
+case class MDEntrySize(qty: BigDecimal) extends FixField(271, types.Qty(qty))
 
 case class MDEntryDate(year: Int, month: Int, day: Int) extends FixField(272, types.UTCDateOnly(year, month, day))
 
@@ -1645,9 +1644,9 @@ object CorporateAction {
   val LEAP_ROLLOVER = CorporateAction('V')
 }
 
-case class DefBidSize(qty: Decimal) extends FixField(293, types.Qty(qty))
+case class DefBidSize(qty: BigDecimal) extends FixField(293, types.Qty(qty))
 
-case class DefOfferSize(qty: Decimal) extends FixField(294, types.Qty(qty))
+case class DefOfferSize(qty: BigDecimal) extends FixField(294, types.Qty(qty))
 
 case class NoQuoteEntries(num: Int) extends FixField(295, types.NumInGroup(num))
 
@@ -1737,13 +1736,13 @@ case class UnderlyingMaturityDay(day: Int) extends FixField(314, types.DayOfMont
 
 case class UnderlyingPutOrCall(i: Int) extends FixField(315, types.FixInteger(i))
 
-case class UnderlyingStrikePrice(price: Decimal) extends FixField(316, types.Price(price))
+case class UnderlyingStrikePrice(price: BigDecimal) extends FixField(316, types.Price(price))
 
 case class UnderlyingOptAttribute(c: Char) extends FixField(317, types.FixChar(c))
 
 case class UnderlyingCurrency(code: String) extends FixField(318, types.Currency(code))
 
-case class RatioQty(qty: Decimal) extends FixField(319, types.Qty(qty))
+case class RatioQty(qty: BigDecimal) extends FixField(319, types.Qty(qty))
 
 case class SecurityReqID(s: String) extends FixField(320, types.FixString(s))
 
@@ -1812,13 +1811,13 @@ case class InViewOfCommon(bool: Boolean) extends FixField(328, types.FixBoolean(
 
 case class DueToRelated(bool: Boolean) extends FixField(329, types.FixBoolean(bool))
 
-case class BuyVolume(qty: Decimal) extends FixField(330, types.Qty(qty))
+case class BuyVolume(qty: BigDecimal) extends FixField(330, types.Qty(qty))
 
-case class SellVolume(qty: Decimal) extends FixField(331, types.Qty(qty))
+case class SellVolume(qty: BigDecimal) extends FixField(331, types.Qty(qty))
 
-case class HighPx(price: Decimal) extends FixField(332, types.Price(price))
+case class HighPx(price: BigDecimal) extends FixField(332, types.Price(price))
 
-case class LowPx(price: Decimal) extends FixField(333, types.Price(price))
+case class LowPx(price: BigDecimal) extends FixField(333, types.Price(price))
 
 case class Adjustment(i: Int) extends FixField(334, types.FixInteger(i))
 object Adjustment {
@@ -1914,7 +1913,7 @@ case class EncodedUnderlyingSecurityDescLen(length: Int) extends FixField(364, t
 
 case class EncodedUnderlyingSecurityDesc(data: Array[Byte]) extends FixField(365, types.Data(data))
 
-case class AllocPrice(price: Decimal) extends FixField(366, types.Price(price))
+case class AllocPrice(price: BigDecimal) extends FixField(366, types.Price(price))
 
 case class QuoteSetValidUntilTime(timestamp: Date) extends FixField(367, types.UTCTimestamp(timestamp))
 
@@ -2007,7 +2006,7 @@ object BusinessRejectReason {
   val INVALID_PRICE_INCREMENT = BusinessRejectReason(18)
 }
 
-case class GrossTradeAmt(amount: Decimal) extends FixField(381, types.Amt(amount))
+case class GrossTradeAmt(amount: BigDecimal) extends FixField(381, types.Amt(amount))
 
 case class NoContraBrokers(num: Int) extends FixField(382, types.NumInGroup(num))
 
@@ -2023,7 +2022,7 @@ object MsgDirection {
 
 case class NoTradingSessions(num: Int) extends FixField(386, types.NumInGroup(num))
 
-case class TotalVolumeTraded(qty: Decimal) extends FixField(387, types.Qty(qty))
+case class TotalVolumeTraded(qty: BigDecimal) extends FixField(387, types.Qty(qty))
 
 case class DiscretionInst(c: Char) extends FixField(388, types.FixChar(c))
 object DiscretionInst {
@@ -2037,7 +2036,7 @@ object DiscretionInst {
   val AVERAGE_PRICE_GUARANTEE = DiscretionInst('7')
 }
 
-case class DiscretionOffsetValue(f: Decimal) extends FixField(389, types.FixFloat(f))
+case class DiscretionOffsetValue(f: BigDecimal) extends FixField(389, types.FixFloat(f))
 
 case class BidID(s: String) extends FixField(390, types.FixString(s))
 
@@ -2056,9 +2055,9 @@ object BidType {
 
 case class NumTickets(i: Int) extends FixField(395, types.FixInteger(i))
 
-case class SideValue1(amount: Decimal) extends FixField(396, types.Amt(amount))
+case class SideValue1(amount: BigDecimal) extends FixField(396, types.Amt(amount))
 
-case class SideValue2(amount: Decimal) extends FixField(397, types.Amt(amount))
+case class SideValue2(amount: BigDecimal) extends FixField(397, types.Amt(amount))
 
 case class NoBidDescriptors(num: Int) extends FixField(398, types.NumInGroup(num))
 
@@ -2077,19 +2076,19 @@ object SideValueInd {
   val SIDEVALUE2 = SideValueInd(2)
 }
 
-case class LiquidityPctLow(percentage: Decimal) extends FixField(402, types.Percentage(percentage))
+case class LiquidityPctLow(percentage: BigDecimal) extends FixField(402, types.Percentage(percentage))
 
-case class LiquidityPctHigh(percentage: Decimal) extends FixField(403, types.Percentage(percentage))
+case class LiquidityPctHigh(percentage: BigDecimal) extends FixField(403, types.Percentage(percentage))
 
-case class LiquidityValue(amount: Decimal) extends FixField(404, types.Amt(amount))
+case class LiquidityValue(amount: BigDecimal) extends FixField(404, types.Amt(amount))
 
-case class EFPTrackingError(percentage: Decimal) extends FixField(405, types.Percentage(percentage))
+case class EFPTrackingError(percentage: BigDecimal) extends FixField(405, types.Percentage(percentage))
 
-case class FairValue(amount: Decimal) extends FixField(406, types.Amt(amount))
+case class FairValue(amount: BigDecimal) extends FixField(406, types.Amt(amount))
 
-case class OutsideIndexPct(percentage: Decimal) extends FixField(407, types.Percentage(percentage))
+case class OutsideIndexPct(percentage: BigDecimal) extends FixField(407, types.Percentage(percentage))
 
-case class ValueOfFutures(amount: Decimal) extends FixField(408, types.Amt(amount))
+case class ValueOfFutures(amount: BigDecimal) extends FixField(408, types.Amt(amount))
 
 case class LiquidityIndType(i: Int) extends FixField(409, types.FixInteger(i))
 object LiquidityIndType {
@@ -2099,13 +2098,13 @@ object LiquidityIndType {
   val OTHER = LiquidityIndType(4)
 }
 
-case class WtAverageLiquidity(percentage: Decimal) extends FixField(410, types.Percentage(percentage))
+case class WtAverageLiquidity(percentage: BigDecimal) extends FixField(410, types.Percentage(percentage))
 
 case class ExchangeForPhysical(bool: Boolean) extends FixField(411, types.FixBoolean(bool))
 
-case class OutMainCntryUIndex(amount: Decimal) extends FixField(412, types.Amt(amount))
+case class OutMainCntryUIndex(amount: BigDecimal) extends FixField(412, types.Amt(amount))
 
-case class CrossPercent(percentage: Decimal) extends FixField(413, types.Percentage(percentage))
+case class CrossPercent(percentage: BigDecimal) extends FixField(413, types.Percentage(percentage))
 
 case class ProgRptReqs(i: Int) extends FixField(414, types.FixInteger(i))
 object ProgRptReqs {
@@ -2177,11 +2176,11 @@ object PriceType {
   val PRODUCT_TICKS_IN_ONE_TWENTY_EIGHTS = PriceType(19)
 }
 
-case class DayOrderQty(qty: Decimal) extends FixField(424, types.Qty(qty))
+case class DayOrderQty(qty: BigDecimal) extends FixField(424, types.Qty(qty))
 
-case class DayCumQty(qty: Decimal) extends FixField(425, types.Qty(qty))
+case class DayCumQty(qty: BigDecimal) extends FixField(425, types.Qty(qty))
 
-case class DayAvgPx(price: Decimal) extends FixField(426, types.Price(price))
+case class DayAvgPx(price: BigDecimal) extends FixField(426, types.Price(price))
 
 case class GTBookingInst(i: Int) extends FixField(427, types.FixInteger(i))
 object GTBookingInst {
@@ -2236,11 +2235,11 @@ object CxlRejResponseTo {
   val ORDER_CANCEL_REPLACE_REQUEST = CxlRejResponseTo('2')
 }
 
-case class UnderlyingCouponRate(percentage: Decimal) extends FixField(435, types.Percentage(percentage))
+case class UnderlyingCouponRate(percentage: BigDecimal) extends FixField(435, types.Percentage(percentage))
 
-case class UnderlyingContractMultiplier(f: Decimal) extends FixField(436, types.FixFloat(f))
+case class UnderlyingContractMultiplier(f: BigDecimal) extends FixField(436, types.FixFloat(f))
 
-case class ContraTradeQty(qty: Decimal) extends FixField(437, types.Qty(qty))
+case class ContraTradeQty(qty: BigDecimal) extends FixField(437, types.Qty(qty))
 
 case class ContraTradeTime(timestamp: Date) extends FixField(438, types.UTCTimestamp(timestamp))
 
@@ -2293,7 +2292,7 @@ case class TotalVolumeTradedDate(year: Int, month: Int, day: Int) extends FixFie
 
 case class TotalVolumeTradedTime(hour: Int, minute: Int, second: Int, millis: Int) extends FixField(450, types.UTCTimeOnly(hour, minute, second, millis))
 
-case class NetChgPrevDay(offset: Decimal) extends FixField(451, types.PriceOffset(offset))
+case class NetChgPrevDay(offset: BigDecimal) extends FixField(451, types.PriceOffset(offset))
 
 case class PartyRole(i: Int) extends FixField(452, types.FixInteger(i))
 object PartyRole {
@@ -2438,7 +2437,7 @@ object RoundingDirection {
   val ROUND_UP = RoundingDirection('2')
 }
 
-case class RoundingModulus(f: Decimal) extends FixField(469, types.FixFloat(f))
+case class RoundingModulus(f: BigDecimal) extends FixField(469, types.FixFloat(f))
 
 case class CountryOfIssue(code: String) extends FixField(470, types.Country(code))
 
@@ -2507,7 +2506,7 @@ object ExecPriceType {
   val SINGLE_PRICE = ExecPriceType('S')
 }
 
-case class ExecPriceAdjustment(f: Decimal) extends FixField(485, types.FixFloat(f))
+case class ExecPriceAdjustment(f: BigDecimal) extends FixField(485, types.FixFloat(f))
 
 case class DateOfBirth(year: Int, month: Int, day: Int) extends FixField(486, types.LocalMktDate(year, month, day))
 
@@ -2650,7 +2649,7 @@ case class NoDistribInsts(num: Int) extends FixField(510, types.NumInGroup(num))
 
 case class RegistEmail(s: String) extends FixField(511, types.FixString(s))
 
-case class DistribPercentage(percentage: Decimal) extends FixField(512, types.Percentage(percentage))
+case class DistribPercentage(percentage: BigDecimal) extends FixField(512, types.Percentage(percentage))
 
 case class RegistID(s: String) extends FixField(513, types.FixString(s))
 
@@ -2663,7 +2662,7 @@ object RegistTransType {
 
 case class ExecValuationPoint(timestamp: Date) extends FixField(515, types.UTCTimestamp(timestamp))
 
-case class OrderPercent(percentage: Decimal) extends FixField(516, types.Percentage(percentage))
+case class OrderPercent(percentage: BigDecimal) extends FixField(516, types.Percentage(percentage))
 
 case class OwnershipType(c: Char) extends FixField(517, types.FixChar(c))
 object OwnershipType {
@@ -2693,7 +2692,7 @@ object ContAmtType {
   val NET_SETTLEMENT_AMOUNT = ContAmtType(15)
 }
 
-case class ContAmtValue(f: Decimal) extends FixField(520, types.FixFloat(f))
+case class ContAmtValue(f: BigDecimal) extends FixField(520, types.FixFloat(f))
 
 case class ContAmtCurr(code: String) extends FixField(521, types.Currency(code))
 
@@ -2803,7 +2802,7 @@ case class NestedPartyRole(i: Int) extends FixField(538, types.FixInteger(i))
 
 case class NoNestedPartyIDs(num: Int) extends FixField(539, types.NumInGroup(num))
 
-case class TotalAccruedInterestAmt(amount: Decimal) extends FixField(540, types.Amt(amount))
+case class TotalAccruedInterestAmt(amount: BigDecimal) extends FixField(540, types.Amt(amount))
 
 case class MaturityDate(year: Int, month: Int, day: Int) extends FixField(541, types.LocalMktDate(year, month, day))
 
@@ -2885,9 +2884,9 @@ object SecurityRequestResult {
   val REQUEST_FOR_INSTRUMENT_DATA_NOT_SUPPORTED = SecurityRequestResult(5)
 }
 
-case class RoundLot(qty: Decimal) extends FixField(561, types.Qty(qty))
+case class RoundLot(qty: BigDecimal) extends FixField(561, types.Qty(qty))
 
-case class MinTradeVol(qty: Decimal) extends FixField(562, types.Qty(qty))
+case class MinTradeVol(qty: BigDecimal) extends FixField(562, types.Qty(qty))
 
 case class MultiLegRptTypeReq(i: Int) extends FixField(563, types.FixInteger(i))
 object MultiLegRptTypeReq {
@@ -2900,7 +2899,7 @@ case class LegPositionEffect(c: Char) extends FixField(564, types.FixChar(c))
 
 case class LegCoveredOrUncovered(i: Int) extends FixField(565, types.FixInteger(i))
 
-case class LegPrice(price: Decimal) extends FixField(566, types.Price(price))
+case class LegPrice(price: BigDecimal) extends FixField(566, types.Price(price))
 
 case class TradSesStatusRejReason(i: Int) extends FixField(567, types.FixInteger(i))
 object TradSesStatusRejReason {
@@ -3096,13 +3095,13 @@ case class LegMaturityMonthYear(year: Int, month: Int, day: Option[Int], week: O
 
 case class LegMaturityDate(year: Int, month: Int, day: Int) extends FixField(611, types.LocalMktDate(year, month, day))
 
-case class LegStrikePrice(price: Decimal) extends FixField(612, types.Price(price))
+case class LegStrikePrice(price: BigDecimal) extends FixField(612, types.Price(price))
 
 case class LegOptAttribute(c: Char) extends FixField(613, types.FixChar(c))
 
-case class LegContractMultiplier(f: Decimal) extends FixField(614, types.FixFloat(f))
+case class LegContractMultiplier(f: BigDecimal) extends FixField(614, types.FixFloat(f))
 
-case class LegCouponRate(percentage: Decimal) extends FixField(615, types.Percentage(percentage))
+case class LegCouponRate(percentage: BigDecimal) extends FixField(615, types.Percentage(percentage))
 
 case class LegSecurityExchange(code: String) extends FixField(616, types.Exchange(code))
 
@@ -3118,7 +3117,7 @@ case class EncodedLegSecurityDescLen(length: Int) extends FixField(621, types.Le
 
 case class EncodedLegSecurityDesc(data: Array[Byte]) extends FixField(622, types.Data(data))
 
-case class LegRatioQty(f: Decimal) extends FixField(623, types.FixFloat(f))
+case class LegRatioQty(f: BigDecimal) extends FixField(623, types.FixFloat(f))
 
 case class LegSide(c: Char) extends FixField(624, types.FixChar(c))
 
@@ -3150,13 +3149,13 @@ case class HopSendingTime(timestamp: Date) extends FixField(629, types.UTCTimest
 
 case class HopRefID(seqNum: Int) extends FixField(630, types.SeqNum(seqNum))
 
-case class MidPx(price: Decimal) extends FixField(631, types.Price(price))
+case class MidPx(price: BigDecimal) extends FixField(631, types.Price(price))
 
-case class BidYield(percentage: Decimal) extends FixField(632, types.Percentage(percentage))
+case class BidYield(percentage: BigDecimal) extends FixField(632, types.Percentage(percentage))
 
-case class MidYield(percentage: Decimal) extends FixField(633, types.Percentage(percentage))
+case class MidYield(percentage: BigDecimal) extends FixField(633, types.Percentage(percentage))
 
-case class OfferYield(percentage: Decimal) extends FixField(634, types.Percentage(percentage))
+case class OfferYield(percentage: BigDecimal) extends FixField(634, types.Percentage(percentage))
 
 case class ClearingFeeIndicator(s: String) extends FixField(635, types.FixString(s))
 object ClearingFeeIndicator {
@@ -3178,7 +3177,7 @@ object ClearingFeeIndicator {
 
 case class WorkingIndicator(bool: Boolean) extends FixField(636, types.FixBoolean(bool))
 
-case class LegLastPx(price: Decimal) extends FixField(637, types.Price(price))
+case class LegLastPx(price: BigDecimal) extends FixField(637, types.Price(price))
 
 case class PriorityIndicator(i: Int) extends FixField(638, types.FixInteger(i))
 object PriorityIndicator {
@@ -3186,33 +3185,33 @@ object PriorityIndicator {
   val LOST_PRIORITY_AS_RESULT_OF_ORDER_CHANGE = PriorityIndicator(1)
 }
 
-case class PriceImprovement(offset: Decimal) extends FixField(639, types.PriceOffset(offset))
+case class PriceImprovement(offset: BigDecimal) extends FixField(639, types.PriceOffset(offset))
 
-case class Price2(price: Decimal) extends FixField(640, types.Price(price))
+case class Price2(price: BigDecimal) extends FixField(640, types.Price(price))
 
-case class LastForwardPoints2(offset: Decimal) extends FixField(641, types.PriceOffset(offset))
+case class LastForwardPoints2(offset: BigDecimal) extends FixField(641, types.PriceOffset(offset))
 
-case class BidForwardPoints2(offset: Decimal) extends FixField(642, types.PriceOffset(offset))
+case class BidForwardPoints2(offset: BigDecimal) extends FixField(642, types.PriceOffset(offset))
 
-case class OfferForwardPoints2(offset: Decimal) extends FixField(643, types.PriceOffset(offset))
+case class OfferForwardPoints2(offset: BigDecimal) extends FixField(643, types.PriceOffset(offset))
 
 case class RFQReqID(s: String) extends FixField(644, types.FixString(s))
 
-case class MktBidPx(price: Decimal) extends FixField(645, types.Price(price))
+case class MktBidPx(price: BigDecimal) extends FixField(645, types.Price(price))
 
-case class MktOfferPx(price: Decimal) extends FixField(646, types.Price(price))
+case class MktOfferPx(price: BigDecimal) extends FixField(646, types.Price(price))
 
-case class MinBidSize(qty: Decimal) extends FixField(647, types.Qty(qty))
+case class MinBidSize(qty: BigDecimal) extends FixField(647, types.Qty(qty))
 
-case class MinOfferSize(qty: Decimal) extends FixField(648, types.Qty(qty))
+case class MinOfferSize(qty: BigDecimal) extends FixField(648, types.Qty(qty))
 
 case class QuoteStatusReqID(s: String) extends FixField(649, types.FixString(s))
 
 case class LegalConfirm(bool: Boolean) extends FixField(650, types.FixBoolean(bool))
 
-case class UnderlyingLastPx(price: Decimal) extends FixField(651, types.Price(price))
+case class UnderlyingLastPx(price: BigDecimal) extends FixField(651, types.Price(price))
 
-case class UnderlyingLastQty(qty: Decimal) extends FixField(652, types.Qty(qty))
+case class UnderlyingLastQty(qty: BigDecimal) extends FixField(652, types.Qty(qty))
 
 case class SecDefStatus(i: Int) extends FixField(653, types.FixInteger(i))
 object SecDefStatus {
@@ -3227,9 +3226,9 @@ case class LegRefID(s: String) extends FixField(654, types.FixString(s))
 
 case class ContraLegRefID(s: String) extends FixField(655, types.FixString(s))
 
-case class SettlCurrBidFxRate(f: Decimal) extends FixField(656, types.FixFloat(f))
+case class SettlCurrBidFxRate(f: BigDecimal) extends FixField(656, types.FixFloat(f))
 
-case class SettlCurrOfferFxRate(f: Decimal) extends FixField(657, types.FixFloat(f))
+case class SettlCurrOfferFxRate(f: BigDecimal) extends FixField(657, types.FixFloat(f))
 
 case class QuoteRequestRejectReason(i: Int) extends FixField(658, types.FixInteger(i))
 object QuoteRequestRejectReason {
@@ -3261,7 +3260,7 @@ object AcctIDSource {
 
 case class AllocAcctIDSource(i: Int) extends FixField(661, types.FixInteger(i))
 
-case class BenchmarkPrice(price: Decimal) extends FixField(662, types.Price(price))
+case class BenchmarkPrice(price: BigDecimal) extends FixField(662, types.Price(price))
 
 case class BenchmarkPriceType(i: Int) extends FixField(663, types.FixInteger(i))
 
@@ -3291,7 +3290,7 @@ object DeliveryForm {
   val BEARER = DeliveryForm(2)
 }
 
-case class LastParPx(price: Decimal) extends FixField(669, types.Price(price))
+case class LastParPx(price: BigDecimal) extends FixField(669, types.Price(price))
 
 case class NoLegAllocs(num: Int) extends FixField(670, types.NumInGroup(num))
 
@@ -3299,7 +3298,7 @@ case class LegAllocAccount(s: String) extends FixField(671, types.FixString(s))
 
 case class LegIndividualAllocID(s: String) extends FixField(672, types.FixString(s))
 
-case class LegAllocQty(qty: Decimal) extends FixField(673, types.Qty(qty))
+case class LegAllocQty(qty: BigDecimal) extends FixField(673, types.Qty(qty))
 
 case class LegAllocAcctIDSource(s: String) extends FixField(674, types.FixString(s))
 
@@ -3311,23 +3310,23 @@ case class LegBenchmarkCurveName(s: String) extends FixField(677, types.FixStrin
 
 case class LegBenchmarkCurvePoint(s: String) extends FixField(678, types.FixString(s))
 
-case class LegBenchmarkPrice(price: Decimal) extends FixField(679, types.Price(price))
+case class LegBenchmarkPrice(price: BigDecimal) extends FixField(679, types.Price(price))
 
 case class LegBenchmarkPriceType(i: Int) extends FixField(680, types.FixInteger(i))
 
-case class LegBidPx(price: Decimal) extends FixField(681, types.Price(price))
+case class LegBidPx(price: BigDecimal) extends FixField(681, types.Price(price))
 
 case class LegIOIQty(s: String) extends FixField(682, types.FixString(s))
 
 case class NoLegStipulations(num: Int) extends FixField(683, types.NumInGroup(num))
 
-case class LegOfferPx(price: Decimal) extends FixField(684, types.Price(price))
+case class LegOfferPx(price: BigDecimal) extends FixField(684, types.Price(price))
 
-case class LegOrderQty(qty: Decimal) extends FixField(685, types.Qty(qty))
+case class LegOrderQty(qty: BigDecimal) extends FixField(685, types.Qty(qty))
 
 case class LegPriceType(i: Int) extends FixField(686, types.FixInteger(i))
 
-case class LegQty(qty: Decimal) extends FixField(687, types.Qty(qty))
+case class LegQty(qty: BigDecimal) extends FixField(687, types.Qty(qty))
 
 case class LegStipulationType(s: String) extends FixField(688, types.FixString(s))
 
@@ -3373,7 +3372,7 @@ case class QuoteQualifier(c: Char) extends FixField(695, types.FixChar(c))
 
 case class YieldRedemptionDate(year: Int, month: Int, day: Int) extends FixField(696, types.LocalMktDate(year, month, day))
 
-case class YieldRedemptionPrice(price: Decimal) extends FixField(697, types.Price(price))
+case class YieldRedemptionPrice(price: BigDecimal) extends FixField(697, types.Price(price))
 
 case class YieldRedemptionPriceType(i: Int) extends FixField(698, types.FixInteger(i))
 
@@ -3412,9 +3411,9 @@ object PosType {
   val EXCHANGE_FOR_PHYSICAL_QTY = PosType("EP")
 }
 
-case class LongQty(qty: Decimal) extends FixField(704, types.Qty(qty))
+case class LongQty(qty: BigDecimal) extends FixField(704, types.Qty(qty))
 
-case class ShortQty(qty: Decimal) extends FixField(705, types.Qty(qty))
+case class ShortQty(qty: BigDecimal) extends FixField(705, types.Qty(qty))
 
 case class PosQtyStatus(i: Int) extends FixField(706, types.FixInteger(i))
 object PosQtyStatus {
@@ -3436,7 +3435,7 @@ object PosAmtType {
   val SETTLEMENT_VALUE = PosAmtType("SETL")
 }
 
-case class PosAmt(amount: Decimal) extends FixField(708, types.Amt(amount))
+case class PosAmt(amount: BigDecimal) extends FixField(708, types.Amt(amount))
 
 case class PosTransType(i: Int) extends FixField(709, types.FixInteger(i))
 object PosTransType {
@@ -3543,7 +3542,7 @@ object PosReqStatus {
   val REJECTED = PosReqStatus(2)
 }
 
-case class SettlPrice(price: Decimal) extends FixField(730, types.Price(price))
+case class SettlPrice(price: BigDecimal) extends FixField(730, types.Price(price))
 
 case class SettlPriceType(i: Int) extends FixField(731, types.FixInteger(i))
 object SettlPriceType {
@@ -3551,27 +3550,27 @@ object SettlPriceType {
   val THEORETICAL = SettlPriceType(2)
 }
 
-case class UnderlyingSettlPrice(price: Decimal) extends FixField(732, types.Price(price))
+case class UnderlyingSettlPrice(price: BigDecimal) extends FixField(732, types.Price(price))
 
 case class UnderlyingSettlPriceType(i: Int) extends FixField(733, types.FixInteger(i))
 
-case class PriorSettlPrice(price: Decimal) extends FixField(734, types.Price(price))
+case class PriorSettlPrice(price: BigDecimal) extends FixField(734, types.Price(price))
 
 case class NoQuoteQualifiers(num: Int) extends FixField(735, types.NumInGroup(num))
 
 case class AllocSettlCurrency(code: String) extends FixField(736, types.Currency(code))
 
-case class AllocSettlCurrAmt(amount: Decimal) extends FixField(737, types.Amt(amount))
+case class AllocSettlCurrAmt(amount: BigDecimal) extends FixField(737, types.Amt(amount))
 
-case class InterestAtMaturity(amount: Decimal) extends FixField(738, types.Amt(amount))
+case class InterestAtMaturity(amount: BigDecimal) extends FixField(738, types.Amt(amount))
 
 case class LegDatedDate(year: Int, month: Int, day: Int) extends FixField(739, types.LocalMktDate(year, month, day))
 
 case class LegPool(s: String) extends FixField(740, types.FixString(s))
 
-case class AllocInterestAtMaturity(amount: Decimal) extends FixField(741, types.Amt(amount))
+case class AllocInterestAtMaturity(amount: BigDecimal) extends FixField(741, types.Amt(amount))
 
-case class AllocAccruedInterestAmt(amount: Decimal) extends FixField(742, types.Amt(amount))
+case class AllocAccruedInterestAmt(amount: BigDecimal) extends FixField(742, types.Amt(amount))
 
 case class DeliveryDate(year: Int, month: Int, day: Int) extends FixField(743, types.LocalMktDate(year, month, day))
 
@@ -3581,9 +3580,9 @@ object AssignmentMethod {
   val PRORATA = AssignmentMethod('P')
 }
 
-case class AssignmentUnit(qty: Decimal) extends FixField(745, types.Qty(qty))
+case class AssignmentUnit(qty: BigDecimal) extends FixField(745, types.Qty(qty))
 
-case class OpenInterest(amount: Decimal) extends FixField(746, types.Amt(amount))
+case class OpenInterest(amount: BigDecimal) extends FixField(746, types.Amt(amount))
 
 case class ExerciseMethod(c: Char) extends FixField(747, types.FixChar(c))
 object ExerciseMethod {
@@ -3654,9 +3653,9 @@ case class UnderlyingSecuritySubType(s: String) extends FixField(763, types.FixS
 
 case class LegSecuritySubType(s: String) extends FixField(764, types.FixString(s))
 
-case class AllowableOneSidednessPct(percentage: Decimal) extends FixField(765, types.Percentage(percentage))
+case class AllowableOneSidednessPct(percentage: BigDecimal) extends FixField(765, types.Percentage(percentage))
 
-case class AllowableOneSidednessValue(amount: Decimal) extends FixField(766, types.Amt(amount))
+case class AllowableOneSidednessValue(amount: BigDecimal) extends FixField(766, types.Amt(amount))
 
 case class AllowableOneSidednessCurr(code: String) extends FixField(767, types.Currency(code))
 
@@ -3794,9 +3793,9 @@ object AllocAccountType {
   val JOINT_BACKOFFICE_ACCOUNT = AllocAccountType(8)
 }
 
-case class OrderAvgPx(price: Decimal) extends FixField(799, types.Price(price))
+case class OrderAvgPx(price: BigDecimal) extends FixField(799, types.Price(price))
 
-case class OrderBookingQty(qty: Decimal) extends FixField(800, types.Qty(qty))
+case class OrderBookingQty(qty: BigDecimal) extends FixField(800, types.Qty(qty))
 
 case class NoSettlPartySubIDs(num: Int) extends FixField(801, types.NumInGroup(num))
 
@@ -3856,9 +3855,9 @@ object AllocIntermedReqType {
   val ACCOUNT_LEVEL_REJECT = AllocIntermedReqType(6)
 }
 
-case class UnderlyingPx(price: Decimal) extends FixField(810, types.Price(price))
+case class UnderlyingPx(price: BigDecimal) extends FixField(810, types.Price(price))
 
-case class PriceDelta(f: Decimal) extends FixField(811, types.FixFloat(f))
+case class PriceDelta(f: BigDecimal) extends FixField(811, types.FixFloat(f))
 
 case class ApplQueueMax(i: Int) extends FixField(812, types.FixInteger(i))
 
@@ -4015,7 +4014,7 @@ case class TotNumAssignmentReports(i: Int) extends FixField(832, types.FixIntege
 
 case class AsgnRptID(s: String) extends FixField(833, types.FixString(s))
 
-case class ThresholdAmount(offset: Decimal) extends FixField(834, types.PriceOffset(offset))
+case class ThresholdAmount(offset: BigDecimal) extends FixField(834, types.PriceOffset(offset))
 
 case class PegMoveType(i: Int) extends FixField(835, types.FixInteger(i))
 object PegMoveType {
@@ -4044,7 +4043,7 @@ object PegRoundDirection {
   val MORE_PASSIVE = PegRoundDirection(2)
 }
 
-case class PeggedPrice(price: Decimal) extends FixField(839, types.Price(price))
+case class PeggedPrice(price: BigDecimal) extends FixField(839, types.Price(price))
 
 case class PegScope(i: Int) extends FixField(840, types.FixInteger(i))
 object PegScope {
@@ -4081,7 +4080,7 @@ object DiscretionRoundDirection {
   val MORE_PASSIVE = DiscretionRoundDirection(2)
 }
 
-case class DiscretionPrice(price: Decimal) extends FixField(845, types.Price(price))
+case class DiscretionPrice(price: BigDecimal) extends FixField(845, types.Price(price))
 
 case class DiscretionScope(i: Int) extends FixField(846, types.FixInteger(i))
 object DiscretionScope {
@@ -4100,9 +4099,9 @@ object TargetStrategy {
 
 case class TargetStrategyParameters(s: String) extends FixField(848, types.FixString(s))
 
-case class ParticipationRate(percentage: Decimal) extends FixField(849, types.Percentage(percentage))
+case class ParticipationRate(percentage: BigDecimal) extends FixField(849, types.Percentage(percentage))
 
-case class TargetStrategyPerformance(f: Decimal) extends FixField(850, types.FixFloat(f))
+case class TargetStrategyPerformance(f: BigDecimal) extends FixField(850, types.FixFloat(f))
 
 case class LastLiquidityInd(i: Int) extends FixField(851, types.FixInteger(i))
 object LastLiquidityInd {
@@ -4158,17 +4157,17 @@ object AllocNoOrdersType {
   val EXPLICIT_LIST_PROVIDED = AllocNoOrdersType(1)
 }
 
-case class SharedCommission(amount: Decimal) extends FixField(858, types.Amt(amount))
+case class SharedCommission(amount: BigDecimal) extends FixField(858, types.Amt(amount))
 
 case class ConfirmReqID(s: String) extends FixField(859, types.FixString(s))
 
-case class AvgParPx(price: Decimal) extends FixField(860, types.Price(price))
+case class AvgParPx(price: BigDecimal) extends FixField(860, types.Price(price))
 
-case class ReportedPx(price: Decimal) extends FixField(861, types.Price(price))
+case class ReportedPx(price: BigDecimal) extends FixField(861, types.Price(price))
 
 case class NoCapacities(num: Int) extends FixField(862, types.NumInGroup(num))
 
-case class OrderCapacityQty(qty: Decimal) extends FixField(863, types.Qty(qty))
+case class OrderCapacityQty(qty: BigDecimal) extends FixField(863, types.Qty(qty))
 
 case class NoEvents(num: Int) extends FixField(864, types.NumInGroup(num))
 
@@ -4185,11 +4184,11 @@ object EventType {
 
 case class EventDate(year: Int, month: Int, day: Int) extends FixField(866, types.LocalMktDate(year, month, day))
 
-case class EventPx(price: Decimal) extends FixField(867, types.Price(price))
+case class EventPx(price: BigDecimal) extends FixField(867, types.Price(price))
 
 case class EventText(s: String) extends FixField(868, types.FixString(s))
 
-case class PctAtRisk(percentage: Decimal) extends FixField(869, types.Percentage(percentage))
+case class PctAtRisk(percentage: BigDecimal) extends FixField(869, types.Percentage(percentage))
 
 case class NoInstrAttrib(num: Int) extends FixField(870, types.NumInGroup(num))
 
@@ -4239,21 +4238,21 @@ case class UnderlyingCPProgram(s: String) extends FixField(877, types.FixString(
 
 case class UnderlyingCPRegType(s: String) extends FixField(878, types.FixString(s))
 
-case class UnderlyingQty(qty: Decimal) extends FixField(879, types.Qty(qty))
+case class UnderlyingQty(qty: BigDecimal) extends FixField(879, types.Qty(qty))
 
 case class TrdMatchID(s: String) extends FixField(880, types.FixString(s))
 
 case class SecondaryTradeReportRefID(s: String) extends FixField(881, types.FixString(s))
 
-case class UnderlyingDirtyPrice(price: Decimal) extends FixField(882, types.Price(price))
+case class UnderlyingDirtyPrice(price: BigDecimal) extends FixField(882, types.Price(price))
 
-case class UnderlyingEndPrice(price: Decimal) extends FixField(883, types.Price(price))
+case class UnderlyingEndPrice(price: BigDecimal) extends FixField(883, types.Price(price))
 
-case class UnderlyingStartValue(amount: Decimal) extends FixField(884, types.Amt(amount))
+case class UnderlyingStartValue(amount: BigDecimal) extends FixField(884, types.Amt(amount))
 
-case class UnderlyingCurrentValue(amount: Decimal) extends FixField(885, types.Amt(amount))
+case class UnderlyingCurrentValue(amount: BigDecimal) extends FixField(885, types.Amt(amount))
 
-case class UnderlyingEndValue(amount: Decimal) extends FixField(886, types.Amt(amount))
+case class UnderlyingEndValue(amount: BigDecimal) extends FixField(886, types.Amt(amount))
 
 case class NoUnderlyingStips(num: Int) extends FixField(887, types.NumInGroup(num))
 
@@ -4261,7 +4260,7 @@ case class UnderlyingStipType(s: String) extends FixField(888, types.FixString(s
 
 case class UnderlyingStipValue(s: String) extends FixField(889, types.FixString(s))
 
-case class MaturityNetMoney(amount: Decimal) extends FixField(890, types.Amt(amount))
+case class MaturityNetMoney(amount: BigDecimal) extends FixField(890, types.Amt(amount))
 
 case class MiscFeeBasis(i: Int) extends FixField(891, types.FixInteger(i))
 object MiscFeeBasis {
@@ -4302,13 +4301,13 @@ object CollInquiryQualifier {
 
 case class NoTrades(num: Int) extends FixField(897, types.NumInGroup(num))
 
-case class MarginRatio(percentage: Decimal) extends FixField(898, types.Percentage(percentage))
+case class MarginRatio(percentage: BigDecimal) extends FixField(898, types.Percentage(percentage))
 
-case class MarginExcess(amount: Decimal) extends FixField(899, types.Amt(amount))
+case class MarginExcess(amount: BigDecimal) extends FixField(899, types.Amt(amount))
 
-case class TotalNetValue(amount: Decimal) extends FixField(900, types.Amt(amount))
+case class TotalNetValue(amount: BigDecimal) extends FixField(900, types.Amt(amount))
 
-case class CashOutstanding(amount: Decimal) extends FixField(901, types.Amt(amount))
+case class CashOutstanding(amount: BigDecimal) extends FixField(901, types.Amt(amount))
 
 case class CollAsgnID(s: String) extends FixField(902, types.FixString(s))
 
@@ -4381,11 +4380,11 @@ object DeliveryType {
   val HOLD_IN_CUSTODY = DeliveryType(3)
 }
 
-case class EndAccruedInterestAmt(amount: Decimal) extends FixField(920, types.Amt(amount))
+case class EndAccruedInterestAmt(amount: BigDecimal) extends FixField(920, types.Amt(amount))
 
-case class StartCash(amount: Decimal) extends FixField(921, types.Amt(amount))
+case class StartCash(amount: BigDecimal) extends FixField(921, types.Amt(amount))
 
-case class EndCash(amount: Decimal) extends FixField(922, types.Amt(amount))
+case class EndCash(amount: BigDecimal) extends FixField(922, types.Amt(amount))
 
 case class UserRequestID(s: String) extends FixField(923, types.FixString(s))
 
@@ -4570,19 +4569,19 @@ object SecurityStatus {
 
 case class SettleOnOpenFlag(s: String) extends FixField(966, types.FixString(s))
 
-case class StrikeMultiplier(f: Decimal) extends FixField(967, types.FixFloat(f))
+case class StrikeMultiplier(f: BigDecimal) extends FixField(967, types.FixFloat(f))
 
-case class StrikeValue(f: Decimal) extends FixField(968, types.FixFloat(f))
+case class StrikeValue(f: BigDecimal) extends FixField(968, types.FixFloat(f))
 
-case class MinPriceIncrement(f: Decimal) extends FixField(969, types.FixFloat(f))
+case class MinPriceIncrement(f: BigDecimal) extends FixField(969, types.FixFloat(f))
 
 case class PositionLimit(i: Int) extends FixField(970, types.FixInteger(i))
 
 case class NTPositionLimit(i: Int) extends FixField(971, types.FixInteger(i))
 
-case class UnderlyingAllocationPercent(percentage: Decimal) extends FixField(972, types.Percentage(percentage))
+case class UnderlyingAllocationPercent(percentage: BigDecimal) extends FixField(972, types.Percentage(percentage))
 
-case class UnderlyingCashAmount(amount: Decimal) extends FixField(973, types.Amt(amount))
+case class UnderlyingCashAmount(amount: BigDecimal) extends FixField(973, types.Amt(amount))
 
 case class UnderlyingCashType(s: String) extends FixField(974, types.FixString(s))
 object UnderlyingCashType {
@@ -4623,13 +4622,13 @@ object ExpType {
   val DIFFERENCE = ExpType(5)
 }
 
-case class ExpQty(qty: Decimal) extends FixField(983, types.Qty(qty))
+case class ExpQty(qty: BigDecimal) extends FixField(983, types.Qty(qty))
 
 case class NoUnderlyingAmounts(num: Int) extends FixField(984, types.NumInGroup(num))
 
-case class UnderlyingPayAmount(amount: Decimal) extends FixField(985, types.Amt(amount))
+case class UnderlyingPayAmount(amount: BigDecimal) extends FixField(985, types.Amt(amount))
 
-case class UnderlyingCollectAmount(amount: Decimal) extends FixField(986, types.Amt(amount))
+case class UnderlyingCollectAmount(amount: BigDecimal) extends FixField(986, types.Amt(amount))
 
 case class UnderlyingSettlementDate(year: Int, month: Int, day: Int) extends FixField(987, types.LocalMktDate(year, month, day))
 
@@ -4639,7 +4638,7 @@ case class SecondaryIndividualAllocID(s: String) extends FixField(989, types.Fix
 
 case class LegReportID(s: String) extends FixField(990, types.FixString(s))
 
-case class RndPx(price: Decimal) extends FixField(991, types.Price(price))
+case class RndPx(price: BigDecimal) extends FixField(991, types.Price(price))
 
 case class IndividualAllocType(i: Int) extends FixField(992, types.FixInteger(i))
 object IndividualAllocType {
@@ -4734,13 +4733,13 @@ object AsOfIndicator {
 
 case class NoSideTrdRegTS(num: Int) extends FixField(1016, types.NumInGroup(num))
 
-case class LegOptionRatio(f: Decimal) extends FixField(1017, types.FixFloat(f))
+case class LegOptionRatio(f: BigDecimal) extends FixField(1017, types.FixFloat(f))
 
 case class NoInstrumentParties(num: Int) extends FixField(1018, types.NumInGroup(num))
 
 case class InstrumentPartyID(s: String) extends FixField(1019, types.FixString(s))
 
-case class TradeVolume(qty: Decimal) extends FixField(1020, types.Qty(qty))
+case class TradeVolume(qty: BigDecimal) extends FixField(1020, types.Qty(qty))
 
 case class MDBookType(i: Int) extends FixField(1021, types.FixInteger(i))
 object MDBookType {
@@ -4760,11 +4759,11 @@ object MDOriginType {
   val CROSS = MDOriginType(2)
 }
 
-case class FirstPx(price: Decimal) extends FixField(1025, types.Price(price))
+case class FirstPx(price: BigDecimal) extends FixField(1025, types.Price(price))
 
-case class MDEntrySpotRate(f: Decimal) extends FixField(1026, types.FixFloat(f))
+case class MDEntrySpotRate(f: BigDecimal) extends FixField(1026, types.FixFloat(f))
 
-case class MDEntryForwardPoints(offset: Decimal) extends FixField(1027, types.PriceOffset(offset))
+case class MDEntryForwardPoints(offset: BigDecimal) extends FixField(1027, types.PriceOffset(offset))
 
 case class ManualOrderIndicator(bool: Boolean) extends FixField(1028, types.FixBoolean(bool))
 
@@ -4860,9 +4859,9 @@ object ExecAckStatus {
   val DONT_KNOW = ExecAckStatus('2')
 }
 
-case class UnderlyingDeliveryAmount(amount: Decimal) extends FixField(1037, types.Amt(amount))
+case class UnderlyingDeliveryAmount(amount: BigDecimal) extends FixField(1037, types.Amt(amount))
 
-case class UnderlyingCapValue(amount: Decimal) extends FixField(1038, types.Amt(amount))
+case class UnderlyingCapValue(amount: BigDecimal) extends FixField(1038, types.Amt(amount))
 
 case class UnderlyingSettlMethod(s: String) extends FixField(1039, types.FixString(s))
 
@@ -4878,9 +4877,9 @@ object CollApplType {
   val GENERAL = CollApplType(1)
 }
 
-case class UnderlyingAdjustedQuantity(qty: Decimal) extends FixField(1044, types.Qty(qty))
+case class UnderlyingAdjustedQuantity(qty: BigDecimal) extends FixField(1044, types.Qty(qty))
 
-case class UnderlyingFXRate(f: Decimal) extends FixField(1045, types.FixFloat(f))
+case class UnderlyingFXRate(f: BigDecimal) extends FixField(1045, types.FixFloat(f))
 
 case class UnderlyingFXRateCalc(c: Char) extends FixField(1046, types.FixChar(c))
 object UnderlyingFXRateCalc {
@@ -4896,7 +4895,7 @@ object AllocPositionEffect {
   val FIFO = AllocPositionEffect('F')
 }
 
-case class DealingCapacity(offset: Decimal) extends FixField(1048, types.PriceOffset(offset))
+case class DealingCapacity(offset: BigDecimal) extends FixField(1048, types.PriceOffset(offset))
 
 case class InstrmtAssignmentMethod(c: Char) extends FixField(1049, types.FixChar(c))
 
@@ -4912,7 +4911,7 @@ case class InstrumentPartySubIDType(i: Int) extends FixField(1054, types.FixInte
 
 case class PositionCurrency(s: String) extends FixField(1055, types.FixString(s))
 
-case class CalculatedCcyLastQty(qty: Decimal) extends FixField(1056, types.Qty(qty))
+case class CalculatedCcyLastQty(qty: BigDecimal) extends FixField(1056, types.Qty(qty))
 
 case class AggressorIndicator(bool: Boolean) extends FixField(1057, types.FixBoolean(bool))
 
@@ -4930,15 +4929,15 @@ case class UndlyInstrumentPartySubID(s: String) extends FixField(1063, types.Fix
 
 case class UndlyInstrumentPartySubIDType(i: Int) extends FixField(1064, types.FixInteger(i))
 
-case class BidSwapPoints(offset: Decimal) extends FixField(1065, types.PriceOffset(offset))
+case class BidSwapPoints(offset: BigDecimal) extends FixField(1065, types.PriceOffset(offset))
 
-case class OfferSwapPoints(offset: Decimal) extends FixField(1066, types.PriceOffset(offset))
+case class OfferSwapPoints(offset: BigDecimal) extends FixField(1066, types.PriceOffset(offset))
 
-case class LegBidForwardPoints(offset: Decimal) extends FixField(1067, types.PriceOffset(offset))
+case class LegBidForwardPoints(offset: BigDecimal) extends FixField(1067, types.PriceOffset(offset))
 
-case class LegOfferForwardPoints(offset: Decimal) extends FixField(1068, types.PriceOffset(offset))
+case class LegOfferForwardPoints(offset: BigDecimal) extends FixField(1068, types.PriceOffset(offset))
 
-case class SwapPoints(offset: Decimal) extends FixField(1069, types.PriceOffset(offset))
+case class SwapPoints(offset: BigDecimal) extends FixField(1069, types.PriceOffset(offset))
 
 case class MDQuoteType(i: Int) extends FixField(1070, types.FixInteger(i))
 object MDQuoteType {
@@ -4949,15 +4948,15 @@ object MDQuoteType {
   val INDICATIVE_AND_TRADEABLE = MDQuoteType(4)
 }
 
-case class LastSwapPoints(offset: Decimal) extends FixField(1071, types.PriceOffset(offset))
+case class LastSwapPoints(offset: BigDecimal) extends FixField(1071, types.PriceOffset(offset))
 
-case class SideGrossTradeAmt(amount: Decimal) extends FixField(1072, types.Amt(amount))
+case class SideGrossTradeAmt(amount: BigDecimal) extends FixField(1072, types.Amt(amount))
 
-case class LegLastForwardPoints(offset: Decimal) extends FixField(1073, types.PriceOffset(offset))
+case class LegLastForwardPoints(offset: BigDecimal) extends FixField(1073, types.PriceOffset(offset))
 
-case class LegCalculatedCcyLastQty(qty: Decimal) extends FixField(1074, types.Qty(qty))
+case class LegCalculatedCcyLastQty(qty: BigDecimal) extends FixField(1074, types.Qty(qty))
 
-case class LegGrossTradeAmt(amount: Decimal) extends FixField(1075, types.Amt(amount))
+case class LegGrossTradeAmt(amount: BigDecimal) extends FixField(1075, types.Amt(amount))
 
 case class MaturityTime(hour: Int, minute: Int, second: Int, tz: TimeZone) extends FixField(1079, types.TZTimeOnly(hour, minute, second, tz))
 
@@ -4971,7 +4970,7 @@ object RefOrderIDSource {
   val QUOTENTRYID = RefOrderIDSource('3')
 }
 
-case class SecondaryDisplayQty(qty: Decimal) extends FixField(1082, types.Qty(qty))
+case class SecondaryDisplayQty(qty: BigDecimal) extends FixField(1082, types.Qty(qty))
 
 case class DisplayWhen(c: Char) extends FixField(1083, types.FixChar(c))
 object DisplayWhen {
@@ -4986,15 +4985,15 @@ object DisplayMethod {
   val RANDOM = DisplayMethod('3')
 }
 
-case class DisplayLowQty(qty: Decimal) extends FixField(1085, types.Qty(qty))
+case class DisplayLowQty(qty: BigDecimal) extends FixField(1085, types.Qty(qty))
 
-case class DisplayHighQty(qty: Decimal) extends FixField(1086, types.Qty(qty))
+case class DisplayHighQty(qty: BigDecimal) extends FixField(1086, types.Qty(qty))
 
-case class DisplayMinIncr(qty: Decimal) extends FixField(1087, types.Qty(qty))
+case class DisplayMinIncr(qty: BigDecimal) extends FixField(1087, types.Qty(qty))
 
-case class RefreshQty(qty: Decimal) extends FixField(1088, types.Qty(qty))
+case class RefreshQty(qty: BigDecimal) extends FixField(1088, types.Qty(qty))
 
-case class MatchIncrement(qty: Decimal) extends FixField(1089, types.Qty(qty))
+case class MatchIncrement(qty: BigDecimal) extends FixField(1089, types.Qty(qty))
 
 case class MaxPriceLevels(i: Int) extends FixField(1090, types.FixInteger(i))
 
@@ -5028,7 +5027,7 @@ object PegPriceType {
   val PEG_TO_LIMIT_PRICE = PegPriceType(9)
 }
 
-case class PeggedRefPrice(price: Decimal) extends FixField(1095, types.Price(price))
+case class PeggedRefPrice(price: BigDecimal) extends FixField(1095, types.Price(price))
 
 case class PegSecurityIDSource(s: String) extends FixField(1096, types.FixString(s))
 
@@ -5053,7 +5052,7 @@ object TriggerAction {
   val CANCEL = TriggerAction('3')
 }
 
-case class TriggerPrice(price: Decimal) extends FixField(1102, types.Price(price))
+case class TriggerPrice(price: BigDecimal) extends FixField(1102, types.Price(price))
 
 case class TriggerSymbol(s: String) extends FixField(1103, types.FixString(s))
 
@@ -5087,7 +5086,7 @@ object TriggerPriceDirection {
   val TRIGGER_IF_THE_PRICE_OF_THE_SPECIFIED_TYPE_GOES_DOWN_TO_OR_THROUGH_THE_SPECIFIED_TRIGGER_PRICE = TriggerPriceDirection('D')
 }
 
-case class TriggerNewPrice(price: Decimal) extends FixField(1110, types.Price(price))
+case class TriggerNewPrice(price: BigDecimal) extends FixField(1110, types.Price(price))
 
 case class TriggerOrderType(c: Char) extends FixField(1111, types.FixChar(c))
 object TriggerOrderType {
@@ -5095,7 +5094,7 @@ object TriggerOrderType {
   val LIMIT = TriggerOrderType('2')
 }
 
-case class TriggerNewQty(qty: Decimal) extends FixField(1112, types.Qty(qty))
+case class TriggerNewQty(qty: BigDecimal) extends FixField(1112, types.Qty(qty))
 
 case class TriggerTradingSessionID(s: String) extends FixField(1113, types.FixString(s))
 
@@ -5181,7 +5180,7 @@ case class AllocClearingFeeIndicator(s: String) extends FixField(1136, types.Fix
 
 case class DefaultApplVerID(s: String) extends FixField(1137, types.FixString(s))
 
-case class DisplayQty(qty: Decimal) extends FixField(1138, types.Qty(qty))
+case class DisplayQty(qty: BigDecimal) extends FixField(1138, types.Qty(qty))
 
 case class ExchangeSpecialInstructions(s: String) extends FixField(1139, types.FixString(s))
 

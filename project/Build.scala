@@ -25,7 +25,7 @@ object BuildSettings {
 
   val buildOrganization = "com.miriamlaurel"
   val buildVersion      = "0.1"
-  val buildScalaVersion = "2.9.1"
+  val buildScalaVersion = "2.10.0-RC5"
 
   val buildSettings = Defaults.defaultSettings ++ Seq (
     organization := buildOrganization,
@@ -33,11 +33,10 @@ object BuildSettings {
     scalaVersion := buildScalaVersion,
     shellPrompt  := ShellPrompt.buildShellPrompt,
     libraryDependencies ++= Seq(
-      "org.scalatest" %% "scalatest" % "1.6.1" % "test"
+      "org.scalatest" % "scalatest_2.9.0" % "1.8" % "test"
     ),
     resolvers ++= Seq(
-      "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases",
-      "Miriam Laurel Repository" at "http://miriamlaurel.com:8080/archiva/repository/internal"
+      "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases"
     )
   )
 }

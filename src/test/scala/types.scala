@@ -22,7 +22,7 @@ class FixTypesSuite extends FunSuite {
     List(FixField(269, '1'), FixField(270, Price("1.40550")), FixField(271, Qty("1000000")))
   )
   private val timestamp = FixField(52, UTCTimestamp(someDate))
-  private val snapshot = FixStructure(timestamp, instrument, quotes)
+  private val snapshot = FixComponent(timestamp, instrument, quotes)
 
   private val raw = Seq[FixField](timestamp, FixField(55, "EUR/USD"), FixField(268, 2),
     FixField(269, '0'), FixField(270, Price("1.40546")), FixField(271, Qty("1000000")),
@@ -38,7 +38,7 @@ class FixTypesSuite extends FunSuite {
     assert(Country("US") === Country("US"))
     assert(FixFloat("3.14") === FixFloat("3.14")) // we _must_ be able to compare floats like this
     assert(Price("1.12030") === Price("1.1203"))
-    val now = new Date // todo refactor to Long
+    val now = new Date
     val now2 = new Date(now.getTime)
     assert(UTCTimestamp(now) === UTCTimestamp(now2))
   }

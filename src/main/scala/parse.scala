@@ -22,7 +22,7 @@ package com.miriamlaurel.wontfix.parse
 import annotation.tailrec
 import com.miriamlaurel.wontfix.dictionary.FixDictionary
 import com.miriamlaurel.wontfix.types.{FixInteger, TagNum}
-import com.miriamlaurel.wontfix.structure.{FixStructure, FixRepeatingGroup, FixField, FixElement}
+import com.miriamlaurel.wontfix.structure.{FixComponent, FixRepeatingGroup, FixField, FixElement}
 
 class Parser(dictionary: FixDictionary) {
 
@@ -31,7 +31,7 @@ class Parser(dictionary: FixDictionary) {
    * @param fields Sequence of raw FIX fields.
    * @return A sequence of FIX elements, which can be fields, or repeating groups.
    */
-  def parse(fields: Seq[FixField]): FixStructure = FixStructure(parse(Seq[FixElement](), fields): _*)
+  def parse(fields: Seq[FixField]): FixComponent = FixComponent(parse(Seq[FixElement](), fields): _*)
 
   @tailrec
   private def parse(parsed: Seq[FixElement], rest: Seq[FixField]): Seq[FixElement] = {

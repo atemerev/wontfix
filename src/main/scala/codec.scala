@@ -24,7 +24,6 @@ import com.miriamlaurel.wontfix.types._
 import com.miriamlaurel.wontfix.structure._
 import java.nio.charset.Charset
 import xml.Elem
-import com.miriamlaurel.wontfix.numbers.Decimal
 
 trait ByteCodec {
   def encode(message: FixMessage): Array[Byte]
@@ -76,7 +75,7 @@ class FixtpCodec(val version: String, dictionary: Elem) extends ByteCodec {
     val begin = FixField(8, version)
     val bodyData = Array.concat(body.map(fieldToBytes(_)): _*)
     val bodyLength = FixField(9, bodyData.length)
-    val checksum = FixField(10, bodyData.foldLeft(0)(_.toInt + _.toInt) % 256)
+    val checksum = FixField(10, bodyData.foldLeft(0)(_ + _.toInt) % 256)
     Array.concat(
       fieldToBytes(begin),
       fieldToBytes(typeField),
