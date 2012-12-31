@@ -70,7 +70,7 @@ class FixtpCodec(val version: String, dictionary: Elem) extends ByteCodec {
       this time. */
 
   def encode(message: FixMessage) = {
-    val body = message.structure.flatten
+    val body = message.body.flatten
     val typeField = FixField(35, message.msgType)
     val begin = FixField(8, version)
     val bodyData = Array.concat(body.map(fieldToBytes(_)): _*)

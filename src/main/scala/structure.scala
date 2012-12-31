@@ -44,6 +44,7 @@ case class FixRepeatingGroup(groupTag: TagNum, groups: Seq[FixElement]*) extends
 
   lazy val flatten = FixField(groupTag, NumInGroup(size)) +: groups.flatten.map(_.flatten).flatten.toSeq
 }
+
 object FixRepeatingGroup {
   def apply(groupNumber: Int, groups: Seq[FixElement]*) = new FixRepeatingGroup(TagNum(groupNumber), groups: _*)
 }
@@ -52,5 +53,9 @@ case class FixComponent(elements: FixElement*) extends FixElement {
   lazy val flatten = elements.map(_.flatten).flatten.toSeq
 }
 
-case class FixMessage(msgType: String, structure: FixComponent)
+case class FixMessage(msgType: String, body: FixComponent)
+
+object FixMessage {
+  def apply(msgType: String, elems: FixElement*): FixMessage = FixMessage(msgType, FixComponent(elems: _*))
+}
 

@@ -114,30 +114,42 @@ class FixFloat(override val value: BigDecimal) extends FixValue[BigDecimal] {
 
 object FixFloat extends DeserializableBytes[FixFloat] {
   def apply(value: BigDecimal) = new FixFloat(value)
+  def apply(value: String) = new FixFloat(BigDecimal(value))
+  def apply(value: Double) = new FixFloat(BigDecimal(value))
   def apply(data: Array[Byte]) = FixFloat(BigDecimal(new String(data, ASCII)))
 }
 
 case class Qty(quantity: BigDecimal) extends FixFloat(quantity)
 object Qty extends DeserializableBytes[Qty] {
+  def apply(value: String) = new Qty(BigDecimal(value))
+  def apply(value: Double) = new Qty(BigDecimal(value))
   def apply(data: Array[Byte]) = Qty(BigDecimal(new String(data, ASCII)))
 }
 
 case class Price(price: BigDecimal) extends FixFloat(price)
 object Price extends DeserializableBytes[Price] {
+  def apply(value: String) = new Price(BigDecimal(value))
+  def apply(value: Double) = new Price(BigDecimal(value))
   def apply(data: Array[Byte]) = Price(BigDecimal(new String(data, ASCII)))
 }
 
 case class PriceOffset(offset: BigDecimal) extends FixFloat(offset)
 object PriceOffset extends DeserializableBytes[PriceOffset] {
+  def apply(value: String) = new PriceOffset(BigDecimal(value))
+  def apply(value: Double) = new PriceOffset(BigDecimal(value))
   def apply(data: Array[Byte]) = PriceOffset(BigDecimal(new String(data, ASCII)))
 }
 
 case class Amt(amount: BigDecimal) extends FixFloat(amount)
 object Amt extends DeserializableBytes[Amt] {
+  def apply(value: String) = new Amt(BigDecimal(value))
+  def apply(value: Double) = new Amt(BigDecimal(value))
   def apply(data: Array[Byte]) = Amt(BigDecimal(new String(data, ASCII)))
 }
 
 case class Percentage(ratio: BigDecimal) extends FixFloat(ratio) {
+  def apply(value: String) = new Percentage(BigDecimal(value))
+  def apply(value: Double) = new Percentage(BigDecimal(value))
   override def toString = (value * 100).toString + "%"
 }
 object Percentage extends DeserializableBytes[Percentage] {

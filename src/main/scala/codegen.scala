@@ -65,38 +65,16 @@ object Codegen {
   def genField(fieldNode: Node): String = {
     val fieldType = (fieldNode \ "@name").text
     val tagNum = (fieldNode \ "@number").text.toInt
-    val rawType = (fieldNode \ "@type").text
-    val typeEntry = TYPE_MAP(rawType)
-    val superType = typeEntry._2
-    val valsList = typeEntry._1.split(", ").map(_.split(": ")(0)).mkString(", ")
-    val constructorVals = if (rawType.startsWith("MULTIPLE")) valsList + ": _*" else valsList
-    val caseClassDef =
-      <def>case class {fieldType}({typeEntry._1}) extends FixField({tagNum}, types.{superType}({constructorVals}))</def>.text
-    val enums = (fieldNode \ "value")
-    if (enums.size > 0) caseClassDef +
-      "\n" +
-      "object " + fieldType + " {\n" +
-      enums.map(node => {
-        val quote = LITERAL_QUOTE(rawType)
-        val description = (node \ "@description").text
-        val value = (node \ "@enum").text
-        "  " +
-          <def>val {description} = {fieldType}({quote}{value}{quote})</def>.text
-      }).mkString("\n") +
-      "\n}"
-    else caseClassDef
+    <def>val {fieldType}: Int = {tagNum}</def>.text
   }
 
-  def genComponent(node: Node): String = {
-    val name = (node \ "@name").text
-
-    null
-  }
-
-  def genFields(rootNode: Node): String = (rootNode \ "fields" \ "field").map(genField(_)).mkString("\n\n")
+  def genFields(rootNode: Node): String = (rootNode \ "fields" \ "field").map(genField(_)).map("  " + _).mkString("\n")
 
   def main(args: Array[String]) {
-    val root = XML.loadFile(args(0))
-    println(genFields(root))
+    val root = XML.load(Codegen.getClass.getResourceAsStream("/FIX50.xml"))
+    val header = "package com.temerev.wontfix.fix50\n\npackage object fields {\n"
+    val trailer = "\n}"
+    println(header + genFields(root) + trailer)
+
   }
 }

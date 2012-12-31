@@ -29,8 +29,7 @@ class FixTypesSuite extends FunSuite {
     FixField(269, '1'), FixField(270, Price("1.40550")), FixField(271, Qty("1000000"))
   )
 
-  private val xml = XML.load(this.getClass.getResource("/FIX50.xml"))
-  private val dict = new FixDictionary(xml)
+  private val dict = new FixDictionary(XML.load(this.getClass.getResource("/FIX50.xml")))
 
   test("some simple equality tests") {
     assert(FixInteger(42) === FixInteger(42))
@@ -70,5 +69,9 @@ class FixTypesSuite extends FunSuite {
     val parsed = parser.parse(raw)
     val s = snapshot
     assert(parsed === s)
+  }
+
+  test("Some simple FIX messages") {
+    val quote = FixMessage("i", FixComponent())
   }
 }
