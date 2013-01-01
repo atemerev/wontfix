@@ -19,21 +19,15 @@
 
 package com.miriamlaurel.wontfix.codec
 
-import com.miriamlaurel.wontfix.util._
 import com.miriamlaurel.wontfix.types._
 import com.miriamlaurel.wontfix.structure._
 import java.nio.charset.Charset
-import xml.Elem
+import akka.util.ByteString
+import com.miriamlaurel.wontfix.dictionary.FixDictionary
 
-trait ByteCodec {
-  def encode(message: FixMessage): Array[Byte]
-  def decode(data: Array[Byte]): Either[FixMessage, ParseError]
-  def incrementalDecode(data: Array[Byte]): Seq[Either[FixMessage, ParseError]] = undefined
-}
+class FixCodec(val version: String, dictionary: FixDictionary) {
 
-class FixtpCodec(val version: String, dictionary: Elem) extends ByteCodec {
-
-  val fields = dictionary \\ "fields" \ "field"
+  val fields = dictionary.root \\ "fields" \ "field"
   val typeMap = Map(fields.map(f => ((f \ "@number").text.toInt -> ((f \ "@type").text match {
     case "STRING" => data: Array[Byte] => FixString(data)
     case "CHAR" => data: Array[Byte] => FixChar(data)
@@ -85,21 +79,15 @@ class FixtpCodec(val version: String, dictionary: Elem) extends ByteCodec {
     )
   }
 
-  def decode(data: Array[Byte]) = {
-    val tokens = (new String(data, ASCII)).split(1.toChar).toList
-    if (tokens.size < 3) Right(ParseError("FIX message should contain at least 3 fields")) else tokens.foreach(token =>
-      bytesToField(token.getBytes()) match {
-        case Some(field) => field
-        case None => throw new ParseError("Can't parse FIX field: " + token)
-      }
-    )
-    undefined
+  def decode(data: ByteString): FixMessage = {
+    val tokens = data.decodeString("US-ASCII").split(1.toChar).toList
+    ???
   }
 
   private def fieldToBytes(field: FixField): Array[Byte] = field.toString.getBytes(ASCII) :+ 1.toByte
 
   private def bytesToField(bytes: Array[Byte]): Option[FixField] = {
     val tokens = new String(bytes, ASCII).split("=")
-    undefined
+    ???
   }
 }

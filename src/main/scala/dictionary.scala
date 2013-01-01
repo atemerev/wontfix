@@ -3,7 +3,7 @@ package com.miriamlaurel.wontfix.dictionary
 import xml.Node
 import com.miriamlaurel.wontfix.types.TagNum
 
-class FixDictionary(root: Node) {
+class FixDictionary(val root: Node) {
 
   private[FixDictionary] val fields = root \ "fields" \ "field"
   private[FixDictionary] val fieldsByName = Map[String, Node](fields.map(node => (node \ "@name").text -> node): _*)
