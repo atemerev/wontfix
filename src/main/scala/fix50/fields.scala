@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.temerev.wontfix.fix50
+package com.miriamlaurel.wontfix.fix50
 
 package object fields {
   val Account: Int = 1

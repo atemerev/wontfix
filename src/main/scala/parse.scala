@@ -53,7 +53,7 @@ class Parser(dictionary: FixDictionary) {
         unparsedRest = rest
         seq
     }
-    (FixRepeatingGroup(groupField.tagNumber, result: _*), unparsedRest)
+    (FixRepeatingGroup(TagNum(groupField.tagNumber), result: _*), unparsedRest)
   }
 
   @tailrec

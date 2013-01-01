@@ -7,31 +7,35 @@ sealed trait FixElement {
   override def toString: String = flatten.map(field => field.toString).mkString(" | ")
 }
 
-class FixField(val tag: TagNum, val value: FixValue[Any]) extends FixElement {
+object FixElement {
+  def apply(tagNum: Int, value: Any): FixElement = value match {
+    case v: Int => FixField(tagNum, v)
+    case v: Char => FixField(tagNum, v)
+    case v: String => FixField(tagNum, v)
+    case v: BigDecimal => FixField(tagNum, v)
+    case v: FixValue[_] => FixField(tagNum, v)
+    case group: Seq[(Int, Any)] => FixRepeatingGroup(TagNum(tagNum), group.map(x => FixElement(x._1, x._2)))
+    case _ => throw new IllegalArgumentException("Can't match value: " + value)
+  }
+}
 
-  def this(tagNumber: Int, value: FixValue[Any]) = this(TagNum(tagNumber), value)
+case class FixField(tag: TagNum, value: FixValue[_]) extends FixElement {
+
+  def this(tagNumber: Int, value: FixValue[_]) = this(TagNum(tagNumber), value)
 
   lazy val tagNumber = tag.value
 
   override def toString: String = tagNumber.toString + "=" + value.toString
 
   def flatten = Seq(this)
-
-  override def equals(obj: Any): Boolean = obj match {
-    case that: FixField => this.tag == that.tag && this.value == that.value
-    case _ => false
-  }
-
-  override def hashCode(): Int = super.hashCode()
 }
 
 object FixField {
-  def apply(tag: TagNum, value: FixValue[Any]): FixField = new FixField(tag, value)
-  def apply(tagNumber: Int, value: FixValue[Any]): FixField = new FixField(TagNum(tagNumber), value)
-  def apply(tagNumber: Int, value: Int): FixField = new FixField(TagNum(tagNumber), FixInteger(value))
-  def apply(tagNumber: Int, value: BigDecimal): FixField = new FixField(TagNum(tagNumber), FixFloat(value))
-  def apply(tagNumber: Int, value: Char): FixField = new FixField(TagNum(tagNumber), FixChar(value))
-  def apply(tagNumber: Int, value: String): FixField = new FixField(TagNum(tagNumber), FixString(value))
+  def apply(tagNumber: Int, value: FixValue[_]): FixField = FixField(TagNum(tagNumber), value)
+  def apply(tagNumber: Int, value: Int): FixField = FixField(TagNum(tagNumber), FixInteger(value))
+  def apply(tagNumber: Int, value: BigDecimal): FixField = FixField(TagNum(tagNumber), FixFloat(value))
+  def apply(tagNumber: Int, value: Char): FixField = FixField(TagNum(tagNumber), FixChar(value))
+  def apply(tagNumber: Int, value: String): FixField = FixField(TagNum(tagNumber), FixString(value))
 }
 
 case class FixRepeatingGroup(groupTag: TagNum, groups: Seq[FixElement]*) extends FixElement {
@@ -46,7 +50,7 @@ case class FixRepeatingGroup(groupTag: TagNum, groups: Seq[FixElement]*) extends
 }
 
 object FixRepeatingGroup {
-  def apply(groupNumber: Int, groups: Seq[FixElement]*) = new FixRepeatingGroup(TagNum(groupNumber), groups: _*)
+  def apply(tagNum: Int, groups: Seq[FixElement]*): FixRepeatingGroup = FixRepeatingGroup(TagNum(tagNum), groups: _*)
 }
 
 case class FixComponent(elements: FixElement*) extends FixElement {
@@ -56,6 +60,6 @@ case class FixComponent(elements: FixElement*) extends FixElement {
 case class FixMessage(msgType: String, body: FixComponent)
 
 object FixMessage {
-  def apply(msgType: String, elems: FixElement*): FixMessage = FixMessage(msgType, FixComponent(elems: _*))
+  def apply(msgType: String, elems: (Int, Any)*): FixMessage = FixMessage(msgType, FixComponent(elems.map(p => FixElement(p._1, p._2)): _*))
 }
 

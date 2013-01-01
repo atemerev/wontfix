@@ -126,18 +126,18 @@ object Qty extends DeserializableBytes[Qty] {
   def apply(data: Array[Byte]) = Qty(BigDecimal(new String(data, ASCII)))
 }
 
-case class Price(price: BigDecimal) extends FixFloat(price)
-object Price extends DeserializableBytes[Price] {
-  def apply(value: String) = new Price(BigDecimal(value))
-  def apply(value: Double) = new Price(BigDecimal(value))
-  def apply(data: Array[Byte]) = Price(BigDecimal(new String(data, ASCII)))
+case class Px(price: BigDecimal) extends FixFloat(price)
+object Px extends DeserializableBytes[Px] {
+  def apply(value: String) = new Px(BigDecimal(value))
+  def apply(value: Double) = new Px(BigDecimal(value))
+  def apply(data: Array[Byte]) = Px(BigDecimal(new String(data, ASCII)))
 }
 
-case class PriceOffset(offset: BigDecimal) extends FixFloat(offset)
-object PriceOffset extends DeserializableBytes[PriceOffset] {
-  def apply(value: String) = new PriceOffset(BigDecimal(value))
-  def apply(value: Double) = new PriceOffset(BigDecimal(value))
-  def apply(data: Array[Byte]) = PriceOffset(BigDecimal(new String(data, ASCII)))
+case class PxOffset(offset: BigDecimal) extends FixFloat(offset)
+object PxOffset extends DeserializableBytes[PxOffset] {
+  def apply(value: String) = new PxOffset(BigDecimal(value))
+  def apply(value: Double) = new PxOffset(BigDecimal(value))
+  def apply(data: Array[Byte]) = PxOffset(BigDecimal(new String(data, ASCII)))
 }
 
 case class Amt(amount: BigDecimal) extends FixFloat(amount)
@@ -205,20 +205,20 @@ object MultipleStringValue extends DeserializableBytes[MultipleStringValue] {
   def apply(data: Array[Byte]) = MultipleStringValue((new String(data, ASCII)).split(" "): _*)
 }
 
-case class Country(code: String) extends FixString(code) {
-  require(Country.isCountryCode(code))
+case class Ctry(code: String) extends FixString(code) {
+  require(Ctry.isCountryCode(code))
 }
-object Country extends DeserializableBytes[Country] {
+object Ctry extends DeserializableBytes[Ctry] {
   val codes = Locale.getISOCountries
-  def apply(data: Array[Byte]) = Country(new String(data, ASCII))
+  def apply(data: Array[Byte]) = Ctry(new String(data, ASCII))
   def isCountryCode(string: String): Boolean = codes.contains(string)
 }
 
-case class Currency(code: String) extends FixString(code) {
-  require(Currency.isCurrencyCode(code))
+case class Ccy(code: String) extends FixString(code) {
+  require(Ccy.isCurrencyCode(code))
 }
-object Currency extends DeserializableBytes[Currency] {
-  def apply(data: Array[Byte]) = Currency(new String(data, ASCII))
+object Ccy extends DeserializableBytes[Ccy] {
+  def apply(data: Array[Byte]) = Ccy(new String(data, ASCII))
   def isCurrencyCode(string: String): Boolean = try {
     java.util.Currency.getInstance(string)
     true
