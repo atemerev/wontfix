@@ -33,7 +33,7 @@ object BuildSettings {
     scalaVersion := buildScalaVersion,
     shellPrompt  := ShellPrompt.buildShellPrompt,
     libraryDependencies ++= Seq(
-      "org.scalatest" % "scalatest_2.10.0-RC5" % "1.8-B1",
+      "org.scalatest" % "scalatest_2.10" % "1.9.1",
       "com.typesafe.akka" %% "akka-actor" % "2.1.0"
     ),
     resolvers ++= Seq(

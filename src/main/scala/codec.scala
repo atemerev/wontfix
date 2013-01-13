@@ -25,7 +25,7 @@ import java.nio.charset.Charset
 import akka.util.ByteString
 import com.miriamlaurel.wontfix.dictionary.FixDictionary
 
-class FixCodec(val version: String, dictionary: FixDictionary) {
+class FixCodec(val version: String, val dictionary: FixDictionary) {
 
   val fields = dictionary.root \\ "fields" \ "field"
   val typeMap = Map(fields.map(f => ((f \ "@number").text.toInt -> ((f \ "@type").text match {
@@ -58,7 +58,14 @@ class FixCodec(val version: String, dictionary: FixDictionary) {
     case _ => throw new ParseError("Unknown type")
   }))): _*)
 
-  private val ASCII = Charset.forName("US-ASCII")
+  val ASCII = Charset.forName("US-ASCII")
+
+  def parseField(data: ByteString): FixField = {
+    val tokens = data.decodeString(ASCII.name).split('=')
+    val tagNum = tokens(0).toInt
+    val value = typeMap(tagNum).apply(tokens(1).getBytes(ASCII))
+    FixField(tagNum, value)
+  }
 
   /*! Since we want something working first, we will not bother with SeqNum and SenderCompID at
       this time. */
@@ -86,8 +93,5 @@ class FixCodec(val version: String, dictionary: FixDictionary) {
 
   private def fieldToBytes(field: FixField): Array[Byte] = field.toString.getBytes(ASCII) :+ 1.toByte
 
-  private def bytesToField(bytes: Array[Byte]): Option[FixField] = {
-    val tokens = new String(bytes, ASCII).split("=")
-    ???
-  }
+  private def bytesToField(bytes: ByteString): Option[FixField] = ???
 }
