@@ -70,8 +70,4 @@ class FixTypesSuite extends FunSuite {
     val s = snapshot
     assert(parsed === s)
   }
-
-  test("Some simple FIX messages") {
-    val quote = FixMessage(Quote, Symbol -> "EUR/USD")
-  }
 }

@@ -2,11 +2,11 @@ package com.miriamlaurel.wontfix.dictionary
 
 import xml.{XML, Node}
 import com.miriamlaurel.wontfix.types.TagNum
-import com.miriamlaurel.wontfix.structure.FixElement
+import com.miriamlaurel.wontfix.structure.FixField
 
 class FixDictionary(val root: Node) {
 
-  def this(resourceName: String) = this(XML.load(FixElement.getClass.getResourceAsStream("/FIX50.xml")))
+  def this(resourceName: String) = this(XML.load(FixField.getClass.getResourceAsStream(resourceName)))
 
   private[FixDictionary] val fields = root \ "fields" \ "field"
   private[FixDictionary] val fieldsByName = Map[String, Node](fields.map(node => (node \ "@name").text -> node): _*)

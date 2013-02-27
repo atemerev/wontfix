@@ -4,18 +4,7 @@ import com.miriamlaurel.wontfix.types._
 
 sealed trait FixElement {
   def flatten: Seq[FixField]
-  override def toString: String = flatten.map(field => field.toString).mkString(" | ")
-}
-
-object FixElement {
-  def apply(tagNum: Int, value: Any): FixElement = value match {
-    case v: Int => FixField(tagNum, v)
-    case v: Char => FixField(tagNum, v)
-    case v: String => FixField(tagNum, v)
-    case v: BigDecimal => FixField(tagNum, v)
-    case v: FixValue[_] => FixField(tagNum, v)
-    case _ => throw new IllegalArgumentException("Can't match value: " + value)
-  }
+  override def toString: String = flatten.map(_.toString).mkString(" | ")
 }
 
 case class FixField(tag: TagNum, value: FixValue[_]) extends FixElement {
