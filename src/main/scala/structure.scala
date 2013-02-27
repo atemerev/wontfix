@@ -14,7 +14,6 @@ object FixElement {
     case v: String => FixField(tagNum, v)
     case v: BigDecimal => FixField(tagNum, v)
     case v: FixValue[_] => FixField(tagNum, v)
-    case group: Seq[(Int, Any)] => FixRepeatingGroup(TagNum(tagNum), group.map(x => FixElement(x._1, x._2)))
     case _ => throw new IllegalArgumentException("Can't match value: " + value)
   }
 }
@@ -38,7 +37,7 @@ object FixField {
   def apply(tagNumber: Int, value: String): FixField = FixField(TagNum(tagNumber), FixString(value))
 }
 
-case class FixRepeatingGroup(groupTag: TagNum, groups: Seq[FixElement]*) extends FixElement {
+case class FixGroup(groupTag: TagNum, groups: Seq[FixElement]*) extends FixElement {
 
   require(groups.forall(e => e.length > 0), "Empty groups are not allowed")
   require(groups.map(_(0).asInstanceOf[FixField].tagNumber).toSet.size == 1,
@@ -49,8 +48,8 @@ case class FixRepeatingGroup(groupTag: TagNum, groups: Seq[FixElement]*) extends
   lazy val flatten = FixField(groupTag, NumInGroup(size)) +: groups.flatten.map(_.flatten).flatten.toSeq
 }
 
-object FixRepeatingGroup {
-  def apply(tagNum: Int, groups: Seq[FixElement]*): FixRepeatingGroup = FixRepeatingGroup(TagNum(tagNum), groups: _*)
+object FixGroup {
+  def apply(tagNum: Int, groups: Seq[FixElement]*): FixGroup = FixGroup(TagNum(tagNum), groups: _*)
 }
 
 case class FixComponent(elements: FixElement*) extends FixElement {
@@ -60,6 +59,6 @@ case class FixComponent(elements: FixElement*) extends FixElement {
 case class FixMessage(msgType: String, body: FixComponent)
 
 object FixMessage {
-  def apply(msgType: String, elems: (Int, Any)*): FixMessage = FixMessage(msgType, FixComponent(elems.map(p => FixElement(p._1, p._2)): _*))
+  def apply(msgType: String, elems: FixElement*): FixMessage = FixMessage(msgType, FixComponent(elems: _*))
 }
 

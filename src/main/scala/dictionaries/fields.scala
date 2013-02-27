@@ -16,9 +16,9 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.miriamlaurel.wontfix.fix50
+package com.miriamlaurel.wontfix.dictionaries
 
-package object fields {
+package object fix50 {
   val Account: Int = 1
   val AdvId: Int = 2
   val AdvRefID: Int = 3

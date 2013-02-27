@@ -2,7 +2,6 @@ package com.miriamlaurel.wontfix.test.types
 
 import org.scalatest.FunSuite
 import com.miriamlaurel.wontfix.types._
-import com.miriamlaurel.wontfix.fix50.fields._
 import com.miriamlaurel.wontfix.structure._
 import java.text.SimpleDateFormat
 import xml.XML
@@ -18,16 +17,16 @@ class FixTypesSuite extends FunSuite {
 
   private val instrument =  FixField(55, "EUR/USD")
 
-  private val quotes = FixRepeatingGroup(268,
-    List(FixField(269, '0'), FixField(270, Px("1.40546")), FixField(271, Qty("1000000"))),
-    List(FixField(269, '1'), FixField(270, Px("1.40550")), FixField(271, Qty("1000000")))
+  private val quotes = FixGroup(268,
+    List(FixField(269, '0'), FixField(270, Price("1.40546")), FixField(271, Qty("1000000"))),
+    List(FixField(269, '1'), FixField(270, Price("1.40550")), FixField(271, Qty("1000000")))
   )
   private val timestamp = FixField(52, UTCTimestamp(someDate))
   private val snapshot = FixComponent(timestamp, instrument, quotes)
 
   private val raw = Seq[FixField](timestamp, FixField(55, "EUR/USD"), FixField(268, 2),
-    FixField(269, '0'), FixField(270, Px("1.40546")), FixField(271, Qty("1000000")),
-    FixField(269, '1'), FixField(270, Px("1.40550")), FixField(271, Qty("1000000"))
+    FixField(269, '0'), FixField(270, Price("1.40546")), FixField(271, Qty("1000000")),
+    FixField(269, '1'), FixField(270, Price("1.40550")), FixField(271, Qty("1000000"))
   )
 
   private val dict = new FixDictionary(XML.load(this.getClass.getResource("/FIX50.xml")))
@@ -35,9 +34,9 @@ class FixTypesSuite extends FunSuite {
   test("some simple equality tests") {
     assert(FixInteger(42) === FixInteger(42))
     assert(FixChar('f') === FixChar('f'))
-    assert(Ctry("US") === Ctry("US"))
+    assert(Country("US") === Country("US"))
     assert(FixFloat("3.14") === FixFloat("3.14")) // we _must_ be able to compare floats like this
-    assert(Px("1.12030") === Px("1.1203"))
+    assert(Price("1.12030") === Price("1.1203"))
     val now = new Date
     val now2 = new Date(now.getTime)
     assert(UTCTimestamp(now) === UTCTimestamp(now2))
@@ -73,6 +72,6 @@ class FixTypesSuite extends FunSuite {
   }
 
   test("Some simple FIX messages") {
-    val quote = FixMessage("i", Symbol -> "EUR/USD")
+    val quote = FixMessage(Quote, Symbol -> "EUR/USD")
   }
 }

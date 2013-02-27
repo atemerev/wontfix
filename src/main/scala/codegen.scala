@@ -72,7 +72,7 @@ object Codegen {
 
   def main(args: Array[String]) {
     val root = XML.load(Codegen.getClass.getResourceAsStream("/FIX50.xml"))
-    val header = "package com.temerev.wontfix.fix50\n\npackage object fields {\n"
+    val header = "package com.temerev.wontfix.dictionaries\n\npackage object fields {\n"
     val trailer = "\n}"
     println(header + genFields(root) + trailer)
 

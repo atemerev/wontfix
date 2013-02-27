@@ -22,7 +22,7 @@ package com.miriamlaurel.wontfix.parse
 import annotation.tailrec
 import com.miriamlaurel.wontfix.dictionary.FixDictionary
 import com.miriamlaurel.wontfix.types.{FixInteger, TagNum}
-import com.miriamlaurel.wontfix.structure.{FixComponent, FixRepeatingGroup, FixField, FixElement}
+import com.miriamlaurel.wontfix.structure.{FixComponent, FixGroup, FixField, FixElement}
 
 class Parser(dictionary: FixDictionary) {
 
@@ -44,7 +44,7 @@ class Parser(dictionary: FixDictionary) {
     }
   }
 
-  private def parseGroup(groupField: FixField, rest: Seq[FixField]): (FixRepeatingGroup, Seq[FixField]) = {
+  private def parseGroup(groupField: FixField, rest: Seq[FixField]): (FixGroup, Seq[FixField]) = {
     val allowedTags = dictionary.getAllowedTags(groupField.tag)
     val numberOfSequences = groupField.value.asInstanceOf[FixInteger].value
     var unparsedRest = rest
@@ -53,7 +53,7 @@ class Parser(dictionary: FixDictionary) {
         unparsedRest = rest
         seq
     }
-    (FixRepeatingGroup(TagNum(groupField.tagNumber), result: _*), unparsedRest)
+    (FixGroup(TagNum(groupField.tagNumber), result: _*), unparsedRest)
   }
 
   @tailrec
