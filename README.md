@@ -19,11 +19,11 @@ You can construct arbitrary FIX messages with standard and custom fields.
 Here is an example:
 
 ```scala
-FixMessage(fix50.Quote,
+val quote = FixMessage(fix50.Quote,
   Symbol("EUR/USD"),
   QuoteReqID("rff-297800023114"),
   QuoteID("QPN209897199991"),
-  Group(fix50.NoQuoteEntries,
+  FixGroup(fix50.NoQuoteEntries,
     List(Side(BID), Price("1.34523")),
     List(Side(OFFER), Price("1.34531"))),
   Party("DB"),
