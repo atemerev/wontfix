@@ -19,7 +19,8 @@
 
 package com.miriamlaurel.wontfix.codegen
 
-import xml.{Node, XML}
+import xml.{NodeSeq, Node, XML}
+import java.io.{BufferedWriter, File, FileWriter}
 
 object Codegen {
 
@@ -65,16 +66,55 @@ object Codegen {
   def genField(fieldNode: Node): String = {
     val fieldType = (fieldNode \ "@name").text
     val tagNum = (fieldNode \ "@number").text.toInt
-    <def>val {fieldType}: Int = {tagNum}</def>.text
+    val rawType = (fieldNode \ "@type").text
+    val typeEntry = TYPE_MAP(rawType)
+    val superType = typeEntry._2
+    val valsList = typeEntry._1.split(", ").map(_.split(": ")(0)).mkString(", ")
+    val constructorVals = if (rawType.startsWith("MULTIPLE")) valsList + ": _*" else valsList
+    val caseClassDef =
+      <def>case class {fieldType}({typeEntry._1}) extends FixField({tagNum}, types.{superType}({constructorVals}))</def>.text
+    val enums = (fieldNode \ "value")
+    if (enums.size > 0) caseClassDef +
+      "\n\n" +
+      "object " + fieldType + " {\n" +
+      enums.map(node => {
+        val quote = LITERAL_QUOTE(rawType)
+        val description = (node \ "@description").text
+        val value = (node \ "@enum").text
+        "  " +
+          <def>val {description} = {fieldType}({quote}{value}{quote})</def>.text
+      }).mkString("\n") +
+      "\n}"
+    else caseClassDef
   }
 
-  def genFields(rootNode: Node): String = (rootNode \ "fields" \ "field").map(genField(_)).map("  " + _).mkString("\n")
-
   def main(args: Array[String]) {
-    val root = XML.load(Codegen.getClass.getResourceAsStream("/FIX50.xml"))
-    val header = "package com.temerev.wontfix.dictionaries\n\npackage object fields {\n"
-    val trailer = "\n}"
-    println(header + genFields(root) + trailer)
+    if (args.length != 3) {
+      println("Usage: codegen <dictionary> <source directory> <package>")
+      System.exit(1)
+    }
+    val root = XML.loadFile(args(0))
+    val fieldNodes = (root \ "fields" \ "field")
+    val packageString = "package " + args(2)
+    val imports = "import com.miriamlaurel.wontfix.types\nimport com.miriamlaurel.wontfix.structure._"
+    fieldNodes foreach (node => {
+      val fieldDef = genField(node)
+      val typeNode: NodeSeq = node \ "@type"
+      val i1 = if (typeNode.text.endsWith("TIMESTAMP"))
+        imports + "\nimport java.util.Date" else imports
+      val i2 = if (typeNode.text.startsWith("TZ")) i1 + "\nimport java.util.TimeZone" else i1
+      writeToFile(
+        dir = args(1),
+        fileName = (node \ "@name").text + ".scala",
+        content = packageString + "\n\n" + i2 + "\n\n" + fieldDef)
+    })
 
+    def writeToFile(dir: String, fileName: String, content: String) {
+      val file = new File(dir, fileName)
+      val writer = new BufferedWriter(new FileWriter(file))
+      writer.write(content)
+      writer.flush()
+      writer.close()
+    }
   }
 }

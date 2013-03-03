@@ -7,7 +7,7 @@ sealed trait FixElement {
   override def toString: String = flatten.map(_.toString).mkString(" | ")
 }
 
-case class FixField(tag: TagNum, value: FixValue[_]) extends FixElement {
+class FixField(val tag: TagNum, val value: FixValue[_]) extends FixElement {
 
   def this(tagNumber: Int, value: FixValue[_]) = this(TagNum(tagNumber), value)
 
@@ -16,9 +16,17 @@ case class FixField(tag: TagNum, value: FixValue[_]) extends FixElement {
   override def toString: String = tagNumber.toString + "=" + value.toString
 
   def flatten = Seq(this)
+
+  override def equals(o: Any): Boolean = o match {
+    case that: FixField => (this.tag == that.tag && this.value == that.value)
+    case _ => false
+  }
+
+  override def hashCode(): Int = tag.hashCode() + 31 * value.hashCode()
 }
 
 object FixField {
+  def apply(tag: TagNum, value: FixValue[_]): FixField = new FixField(tag, value)
   def apply(tagNumber: Int, value: FixValue[_]): FixField = FixField(TagNum(tagNumber), value)
   def apply(tagNumber: Int, value: Int): FixField = FixField(TagNum(tagNumber), FixInteger(value))
   def apply(tagNumber: Int, value: BigDecimal): FixField = FixField(TagNum(tagNumber), FixFloat(value))

@@ -98,11 +98,8 @@ object DayOfMonth extends DeserializableBytes[DayOfMonth] {
   def apply(data: Array[Byte]) = DayOfMonth(new String(data, ASCII).toInt)
 }
 
-/*!## "Float" (i.e. BigDecimal) types
+//!## "Float" (i.e. BigDecimal) types
 
-Here we are going to use our very own BigDecimal implementation. It is based on Scala's BigBigDecimal, but stripped to
-BigDecimal64 representation for performance and convenience purposes. Some useful scaling methods are also added.
-*/
 class FixFloat(override val value: BigDecimal) extends FixValue[BigDecimal] {
   override def equals(other: Any) = other match {
     case f: FixFloat => value.equals(f.value)
@@ -173,8 +170,8 @@ object FixChar extends DeserializableBytes[FixChar] {
 
 case class FixBoolean(booleanValue: Boolean) extends FixChar(if (booleanValue) 'Y' else 'N')
 object FixBoolean extends DeserializableBytes[FixBoolean] {
-  def apply(data: Array[Byte]) = if (data(0).toChar == 'Y') FixBoolean(true) else
-    if (data(0).toChar == 'N') FixBoolean(false) else
+  def apply(data: Array[Byte]) = if (data(0).toChar == 'Y') FixBoolean(booleanValue = true) else
+    if (data(0).toChar == 'N') FixBoolean(booleanValue = false) else
     throw ParseError("Invalid boolean char: " + data(0))
 }
 
@@ -227,7 +224,6 @@ object Currency extends DeserializableBytes[Currency] {
   }
 }
 
-/*! Todo: validate codes with ISO 10383 MIC codes list */
 case class Exchange(code: String) extends FixString(code) {
   require(code.matches("""^[A-Z]+$"""))
 }

@@ -2,7 +2,7 @@ WontFIX: A Pragmatic Scala FIX Engine
 =====================================
 
 This library is work-in-progress. APIs can change anytime. Nothing is 
-true and everything is permitted.
+true and everything is permitted. Fnord.
 
 ### Warning!
 
@@ -26,10 +26,7 @@ val quote = FixMessage(Quote,
   Symbol("EUR/USD"),
   QuoteReqID("rff-297800023114"),
   QuoteID("QPN209897199991"),
-  FixGroup(NoQuoteEntries,
-    List(Side(BID), Price("1.34523")),
-    List(Side(OFFER), Price("1.34531"))),
-  Party("DB"),
+  BidPx(BigDecimal("1.23456")),
+  OfferPx(BigDecimal("1.23457")),
   FixField(9000, "DB-FX"))
 ```
-
