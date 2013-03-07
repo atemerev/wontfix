@@ -73,19 +73,19 @@ class FixTypesSuite extends FunSuite {
   }
 
   test("Construction: typed fields only") {
-
     import com.miriamlaurel.wontfix.versions.fix50.BidPx
     import com.miriamlaurel.wontfix.versions.fix50.OfferPx
     import com.miriamlaurel.wontfix.versions.fix50.QuoteID
     import com.miriamlaurel.wontfix.versions.fix50.Symbol
     import com.miriamlaurel.wontfix.versions.fix50.QuoteReqID
-
-    val quote = FixMessage("S",
+    import com.miriamlaurel.wontfix.versions.fix50.Quote
+    val quote = FixMessage(Quote,
       Symbol("EUR/USD"),
       QuoteReqID("rff-297800023114"),
       QuoteID("QPN209897199991"),
       BidPx(BigDecimal("1.23456")),
       OfferPx(BigDecimal("1.23457")),
       FixField(9000, "DB-FX"))
+    assert(quote.body.toString === "55=EUR/USD | 131=rff-297800023114 | 117=QPN209897199991 | 132=1.23456 | 133=1.23457 | 9000=DB-FX")
   }
 }

@@ -19,8 +19,12 @@ You can construct arbitrary FIX messages with standard and custom fields.
 Here is an example:
 
 ```scala
-import com.miriamlaurel.wontfix._
-import com.miriamlaurel.wontfix.dictionary.fix50._
+import com.miriamlaurel.wontfix.versions.fix50
+import fix50.BidPx
+import fix50.OfferPx
+import fix50.QuoteID
+import fix50.Symbol
+import fix50.QuoteReqID
 
 val quote = FixMessage(Quote,
   Symbol("EUR/USD"),
