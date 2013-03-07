@@ -9,6 +9,7 @@ import com.miriamlaurel.wontfix.dictionary.FixDictionary
 import com.miriamlaurel.wontfix.parse.Parser
 import java.util.{Date, TimeZone}
 import com.miriamlaurel.wontfix.structure.FixComponent
+import com.miriamlaurel.wontfix.versions.fix50.OrdType
 
 class FixTypesSuite extends FunSuite {
 
@@ -73,19 +74,27 @@ class FixTypesSuite extends FunSuite {
   }
 
   test("Construction: typed fields only") {
-    import com.miriamlaurel.wontfix.versions.fix50.BidPx
-    import com.miriamlaurel.wontfix.versions.fix50.OfferPx
-    import com.miriamlaurel.wontfix.versions.fix50.QuoteID
-    import com.miriamlaurel.wontfix.versions.fix50.Symbol
-    import com.miriamlaurel.wontfix.versions.fix50.QuoteReqID
-    import com.miriamlaurel.wontfix.versions.fix50.Quote
-    val quote = FixMessage(Quote,
-      Symbol("EUR/USD"),
+    import com.miriamlaurel.wontfix.versions.fix50._
+/*
+    val quote = FixMessage(QuoteRequest,
+      OrdType.FOREX_MARKET,
       QuoteReqID("rff-297800023114"),
       QuoteID("QPN209897199991"),
       BidPx(BigDecimal("1.23456")),
       OfferPx(BigDecimal("1.23457")),
       FixField(9000, "DB-FX"))
-    assert(quote.body.toString === "55=EUR/USD | 131=rff-297800023114 | 117=QPN209897199991 | 132=1.23456 | 133=1.23457 | 9000=DB-FX")
+*/
+    val mdr = FixMessage(MarketDataRequest,
+      MDReqID("jpm-66349827688"),
+      SubscriptionRequestType.SNAPSHOT_PLUS_UPDATES,
+      MarketDepth(0),
+      MDUpdateType.FULL_REFRESH,
+      AggregatedBook(true),
+      FixGroup(NoMDEntries.FIELD, List(MDEntryType.BID), List(MDEntryType.OFFER)),
+      FixGroup(NoRelatedSym.FIELD, List(Symbol("EUR/USD"))),
+      FixField(10001, "custom")
+    )
+    assert(mdr.body.toString ===
+      "262=jpm-66349827688 | 263=1 | 264=0 | 265=0 | 266=Y | 268=2 | 269=0 | 269=1 | 146=1 | 55=EUR/USD | 10001=custom")
   }
 }
