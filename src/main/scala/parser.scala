@@ -23,8 +23,82 @@ import annotation.tailrec
 import com.miriamlaurel.wontfix.dictionary.FixDictionary
 import com.miriamlaurel.wontfix.types.{FixInteger, TagNum}
 import com.miriamlaurel.wontfix.structure.{FixComponent, FixGroup, FixField, FixElement}
+import java.nio.ByteBuffer
 
 class Parser(dictionary: FixDictionary) {
+
+  var byteState = ByteState.Garbage
+  var tagBuffer = ByteBuffer.allocate(15)
+  var valBuffer = ByteBuffer.allocate(65535)
+
+
+  def onData(bytes: Array[Byte]) {
+
+    import ByteState._
+
+    for (b <- bytes) {
+      byteState match {
+        case Garbage => {
+          if (isNumber(b)) {
+            tagBuffer.put(b)
+            byteState = Tagnum
+          }
+        }
+        case Tagnum => {
+          if (isNumber(b)) {
+            tagBuffer.put(b)
+          } else if (isEqualsSign(b)) {
+            tagBuffer.flip()
+            byteState = Equals
+          } else {
+            fault()
+          }
+        }
+        case Equals => {
+          if (isSplit(b)) {
+            fault()
+          } else {
+            valBuffer.put(b)
+            byteState = Val
+          }
+        }
+        case Val => {
+          if (isSplit(b)) {
+            valBuffer.flip()
+            emitTag()
+            byteState = Split
+          } else {
+            valBuffer.put(b)
+          }
+        }
+        case Split => {
+          if (isNumber(b)) {
+            tagBuffer.put(b)
+            byteState = Tagnum
+          } else {
+            fault()
+          }
+        }
+      }
+    }
+
+    def isNumber(b: Byte) = b >= 0x30 && b <= 0x39
+    def isEqualsSign(b: Byte) = b == 0x3D
+    def isSplit(b: Byte) = b == 0x01
+    def emitTag() {
+      val tagNum = tagBuffer.getInt
+      val bytes = new Array[Byte](valBuffer.remaining())
+      valBuffer.get(bytes)
+      val value = new String(bytes)
+      val field = FixField(tagNum, value)
+      tagBuffer.clear()
+      valBuffer.clear()
+      onTag(field)
+    }
+  }
+
+  def onTag(field: FixField) {
+  }
 
   /**
    * Parse raw sequence of FIX fields and find repeating groups.
@@ -32,6 +106,12 @@ class Parser(dictionary: FixDictionary) {
    * @return A sequence of FIX elements, which can be fields, or repeating groups.
    */
   def parse(fields: Seq[FixField]): FixComponent = FixComponent(parse(Seq[FixElement](), fields): _*)
+
+  private def fault() {
+    tagBuffer.clear()
+    valBuffer.clear()
+    byteState = ByteState.Garbage
+  }
 
   @tailrec
   private def parse(parsed: Seq[FixElement], rest: Seq[FixField]): Seq[FixElement] = {
@@ -67,5 +147,9 @@ class Parser(dictionary: FixDictionary) {
         parseSeq(parsed :+ group, unparsed, allowed - next.tag)
       }
     }
+  }
+
+  object ByteState extends Enumeration {
+    val Garbage, Tagnum, Equals, Val, Split = Value
   }
 }
