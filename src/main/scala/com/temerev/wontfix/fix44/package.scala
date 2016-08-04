@@ -12,4 +12,5 @@ package object fix44 {
   val SecurityID = 48
   val SecurityIDSource = 22
   val Price = 242
+  val TransactTime = 60
 }

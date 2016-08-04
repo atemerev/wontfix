@@ -4,3 +4,9 @@
 .idea/
 target/
 project/
+.js/target
+.js/idea-shared-main
+.js/idea-shared-test
+.jvm/target
+.jvm/idea-shared-main
+.jvm/idea-shared-test
