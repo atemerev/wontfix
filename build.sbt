@@ -22,7 +22,7 @@ lazy val wontFix = crossProject.crossType(CrossType.Pure).in(file(".")).
   ).
   jsSettings(
     libraryDependencies ++= Seq(
-      "org.scala-js" %%% "scalajs-java-time" % "0.2.0"
+      "io.github.soc" %%% "scala-java-time" % "2.0.0-M2"
     )
   )
 

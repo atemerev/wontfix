@@ -1,11 +1,10 @@
 package com.temerev.wontfix
 
-import java.time.Instant
 import java.util.UUID
 
 import com.temerev.wontfix.fix44._
 import com.temerev.wontfix.fix44.messages._
-
+import org.threeten.bp._
 import scala.scalajs.js.JSApp
 
 object TestApp extends JSApp {
@@ -28,5 +27,8 @@ object TestApp extends JSApp {
       TransactTime -> Instant.now
     )
     println(mdRequest)
+    println(new String(mdRequest.toBytes))
+    println(mdRequest.getGroup(NoRelatedSym, 1).getInt(SecurityID))
+    println(mdRequest.getDouble(Price))
   }
 }
